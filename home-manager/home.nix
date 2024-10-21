@@ -100,11 +100,11 @@
   # Enable home-manager and git
   programs.home-manager.enable = true;
 
-  # programs.git = {
-  #   enable = true;
-  #   userName = "jared";
-  #   userEmail = "jaredt2003@hotmail.com";
-  # };
+  programs.git = {
+    enable = true;
+    userName = "jared";
+    userEmail = "jaredt2003@hotmail.com";
+  };
 
   # Nicely reload system units when changing configs
   systemd.user.startServices = "sd-switch";
