@@ -20,18 +20,18 @@
       inherit (self) outputs;
     in
     {
-      # NixOS configuration entrypoint
-      # Available through 'nixos-rebuild --flake .#your-hostname'
       nixosConfigurations = {
 
-        # The big Dell laptop
+        # My big fat Dell laptop
         m4700 = nixpkgs.lib.nixosSystem {
           specialArgs = { inherit inputs outputs; };
-          # > Our main nixos configuration file <
-          modules = [ ./nixos/configuration.nix ];
+          modules = [ 
+            # ./nixos/configuration.nix
+            ./host/m4700/configuration.nix
+          ];
         };
 
-        # Desktop
+        # My main desktop
         z390ud = nixpkgs.lib.nixosSystem {
           specialArgs = { inherit inputs outputs; };
 
