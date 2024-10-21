@@ -5,7 +5,8 @@
 
 {
   imports =
-    [ (modulesPath + "/installer/scan/not-detected.nix")
+    [
+      (modulesPath + "/installer/scan/not-detected.nix")
     ];
 
   boot.initrd.availableKernelModules = [ "xhci_pci" "ehci_pci" "ahci" "firewire_ohci" "usb_storage" "sd_mod" "sr_mod" "sdhci_pci" ];
@@ -14,12 +15,14 @@
   boot.extraModulePackages = [ ];
 
   fileSystems."/" =
-    { device = "/dev/disk/by-uuid/f3d112bf-e3d7-4416-aa31-18dbe8b3b83e";
+    {
+      device = "/dev/disk/by-uuid/f3d112bf-e3d7-4416-aa31-18dbe8b3b83e";
       fsType = "ext4";
     };
 
   fileSystems."/boot" =
-    { device = "/dev/disk/by-uuid/1957-C8A2";
+    {
+      device = "/dev/disk/by-uuid/1957-C8A2";
       fsType = "vfat";
       options = [ "fmask=0022" "dmask=0022" ];
     };
@@ -33,29 +36,51 @@
   networking.useDHCP = lib.mkDefault true;
   # networking.interfaces.eno1.useDHCP = lib.mkDefault true;
   # networking.interfaces.wlp3s0.useDHCP = lib.mkDefault true;
-  
+
+
+  # Sound
+  hardware.pulseaudio.enable = false;
+  security.rtkit.enable = true;
+  services.pipewire = {
+    enable = true;
+    alsa.enable = true;
+    alsa.support32Bit = true;
+    pulse.enable = true;
+    # If you want to use JACK applications, uncomment this
+    #jack.enable = true;
+
+    # use the example session manager (no others are packaged yet so this is enabled by default,
+    # no need to redefine it in your config for now)
+    #media-session.enable = true;
+  };
+
+  # Silence errorannoying messages
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
   hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
 
 
-   hardware.nvidia.package = config.boot.kernelPackages.nvidiaPackages.legacy_470; 
-services.xserver.videoDrivers = [ "nvidia" ]; 
+  # Configure GPU
+  nixpkgs.config.nvidia.acceptLicense = true;
+  hardware.nvidia.package = config.boot.kernelPackages.nvidiaPackages.legacy_470;
+  services.xserver.videoDrivers = [ "nvidia" ];
 
   hardware.nvidia = {
-	nvidiaSettings = true;
-	prime = {
-		offload = {
-                	enable = true;
-                	enableOffloadCmd = true;
-        	};
+    nvidiaSettings = true;
+    prime = {
+      offload = {
+        enable = true;
+        enableOffloadCmd = true;
+      };
 
-		#sync.enable = true;
-		intelBusId = "PCI:0:2:0";
-		nvidiaBusId = "PCI:01:0:0";
-	};
+      #sync.enable = true;
+      intelBusId = "PCI:0:2:0";
+      nvidiaBusId = "PCI:01:0:0";
+    };
 
-};
-#hardware.nvidia.prime = {
-#    sync.enable = true;
-#};
+  };
+
+
+  #hardware.nvidia.prime = {
+  #    sync.enable = true;
+  #};
 }
