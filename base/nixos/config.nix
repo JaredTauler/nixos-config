@@ -1,6 +1,8 @@
 { config, pkgs, ... }:
 
 {
+  networking.hostName = "m4700"; 
+
   users.users.jared = {
     isNormalUser = true;
     description = "Jared Tauler";
