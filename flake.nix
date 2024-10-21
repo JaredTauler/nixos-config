@@ -26,7 +26,7 @@
         m4700 = nixpkgs.lib.nixosSystem {
           specialArgs = { inherit inputs outputs; };
           modules = [ 
-            ./general/configuration.nix
+            ./base/configuration.nix
             ./host/m4700/configuration.nix
           ];
         };

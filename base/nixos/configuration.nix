@@ -1,6 +1,13 @@
 { config, pkgs, ... }:
 
 {
+  users.users.jared = {
+    isNormalUser = true;
+    description = "Jared Tauler";
+    extraGroups = [ "networkmanager" "wheel" ];
+  };
+
+
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
   nixpkgs.config.allowUnfree = true;
@@ -22,4 +29,11 @@
     LC_TELEPHONE = "en_US.UTF-8";
     LC_TIME = "en_US.UTF-8";
   };
+
+  # Configure keymap in X11
+  services.xserver = {
+    layout = "us";
+    xkbVariant = "";
+  };
+
 }
