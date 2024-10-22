@@ -76,7 +76,7 @@
 
   hardware.steam-hardware.enable = true;
 
-  hardware.opengl.enable = true;
+  # hardware.opengl.enable = true;
   hardware.pulseaudio = {
     enable = true;
     extraConfig = ''

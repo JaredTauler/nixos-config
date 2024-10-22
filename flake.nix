@@ -1,5 +1,5 @@
 {
-  description = "Your new nix config";
+  # description = "Your new nix config";
 
   inputs = {
     # Nixpkgs
@@ -24,19 +24,20 @@
 
         m4700 = nixpkgs.lib.nixosSystem {
           specialArgs = { inherit inputs outputs; };
-          modules = [ 
+          modules = [
             ./base/config.nix
-            ./host/m4700/hardware.nix
-            ./host/m4700/system.nix
             ./host/m4700/config.nix
           ];
         };
 
-        # My main desktop
         z390ud = nixpkgs.lib.nixosSystem {
           specialArgs = { inherit inputs outputs; };
 
-          modules = [ ./nixos/other-configuration.nix ]; # Define this file accordingly
+          modules = [
+            ./base/config.nix
+            ./host/z390ud/config.nix
+          
+          ];
         };
       };
 
@@ -46,9 +47,17 @@
         # FIXME replace with your username@hostname
         "jared@m4700" = home-manager.lib.homeManagerConfiguration {
           pkgs = nixpkgs.legacyPackages.x86_64-linux; # Home-manager requires 'pkgs' instance
+          extraSpecialArgs = { inherit inputs outputs; };          
+          modules = [ ./base/home.nix ];
+        };
+
+        "jared@z390ud" = home-manager.lib.homeManagerConfiguration {
+          pkgs = nixpkgs.legacyPackages.x86_64-linux;
           extraSpecialArgs = { inherit inputs outputs; };
-          # > Our main home-manager configuration file <
-          modules = [ ./home-manager/home.nix ];
+          modules = [
+            ./base/home.nix 
+            ./host/z390ud/home.nix          
+          ];
         };
       };
     };
