@@ -2,14 +2,11 @@
 , lib
 , config
 , pkgs
-, nix-colors
-, getHomeOption
 , ...
 }: {
   imports = [
     # nix-colors.homeManagerModules.default
-  ] ++ getHomeOption [
-    "hyprland.nix"
+    ../../home-option/hyprland.nix
   ];
 
 

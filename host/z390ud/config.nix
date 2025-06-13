@@ -1,4 +1,4 @@
-{ config, pkgs, getOption, NixVirt, ... }:
+{ config, pkgs, getOption, ... }:
 let
 
   openrazer-overlay = self: super: {
@@ -31,13 +31,12 @@ in
     [
       ./hardware.nix
       ./video.nix
-      NixVirt.nixosModules.default
-    ] ++ getOption [
-      "printer/epson-et3750.nix"
-      "hyprland.nix"
-      "kodi/.nix"
-      "winapps.nix"
-      "3dprinter.nix"
+
+      ../../option/printer/epson-et3750.nix
+            ../../option/hyprland.nix
+
+       # ../../option/3dprinter.nix
+
     ];
 
 
@@ -73,7 +72,7 @@ hardware.openrazer.enable = true;
 
   environment.systemPackages = with pkgs; [
 
-    xboxdrv
+    # xboxdrv
     qemu
 
     davinci-resolve
@@ -123,15 +122,15 @@ hardware.openrazer.enable = true;
 
 
 
-  virtualisation.libvirt.enable = true;
-  programs.virt-manager.enable = true;
-  boot.extraModprobeConfig = ''
-    options kvm_intel nested=1
-    options kvm_intel emulate_invalid_guest_state=0
-    options kvm ignore_msrs=1
-  '';
-  #users.users.jared.extraGroups = [ "libvirtd" ];  
-  #virtualisation.qemu.host.enable = true;
+  # virtualisation.libvirt.enable = true;
+  # programs.virt-manager.enable = true;
+  # boot.extraModprobeConfig = ''
+  #   options kvm_intel nested=1
+  #   options kvm_intel emulate_invalid_guest_state=0
+  #   options kvm ignore_msrs=1
+  # '';
+  # #users.users.jared.extraGroups = [ "libvirtd" ];
+  # #virtualisation.qemu.host.enable = true;
 
 
   services.openssh = {
@@ -148,59 +147,9 @@ hardware.openrazer.enable = true;
 
 
 
-  nixpkgs.config.permittedInsecurePackages = [
-    "aspnetcore-runtime-6.0.36"
-    "aspnetcore-runtime-wrapped-6.0.36"
-    "dotnet-sdk-6.0.428"
-    "dotnet-sdk-wrapped-6.0.428"
-  ];
 
 
 
-
-
-  nixarr = {
-    enable = true;
-
-    # vpn.enable = true;
-    vpn.wgConf = "/home/jared/nixos-config/secret/denver.conf"; # FIXME
-
-    # vpn.vpnTestService.enable = true;
-    # vpn.vpnTestService.port = 1000;
-
-    sonarr = {
-      # package = unstable.sonarr;
-      enable = true;
-      # vpn.enable = true;
-    };
-
-
-
-
-    jellyfin = {
-      enable = true;
-      # stateDir = "/home/jared/jellyfinstatedir";
-    };
-
-    transmission = {
-      enable = true;
-      # vpn.enable = true;
-    };
-  };
-
-  services.jellyseerr = {
-    enable = true;
-    port = 5055;
-    openFirewall = true; # FIXME not working when firewall not open
-  };
-
-  # FIXME
-  # sudo chown -R radarr /data/media/torrents/radarr/
-  nixarr.radarr = {
-    # package = unstable.sonarr;
-    enable = true;
-    # vpn.enable = true;
-  };
 
 
 boot.supportedFilesystems = [ "ntfs" ];
@@ -216,40 +165,40 @@ boot.supportedFilesystems = [ "ntfs" ];
   #   rocmOverrideGfx = "8.0.3";
   # };
 
-virtualisation.libvirtd = {
-  enable = true;               # you probably have this already
-  qemu.swtpm.enable = true;    # ← **THIS is the missing bit**
-  # (optional, but useful)
-  qemu.ovmf.enable = true;     # UEFI firmware, Secure Boot, etc.
-};
-virtualisation.libvirt.swtpm.enable = true; # TPM shit
-virtualisation.libvirt.connections."qemu:///system".domains = [
-  {
-    definition = NixVirt.lib.domain.writeXML (NixVirt.lib.domain.templates.windows {
-      name = "Windows11";
-      uuid = "12345678-1234-1234-1234-123456789abc"; # generate with `uuidgen` TODO
+# virtualisation.libvirtd = {
+#   enable = true;               # you probably have this already
+#   qemu.swtpm.enable = true;    # ← **THIS is the missing bit**
+#   # (optional, but useful)
+#   qemu.ovmf.enable = true;     # UEFI firmware, Secure Boot, etc.
+# };
+# virtualisation.libvirt.swtpm.enable = true; # TPM shit
+# virtualisation.libvirt.connections."qemu:///system".domains = [
+#   {
+#     definition = NixVirt.lib.domain.writeXML (NixVirt.lib.domain.templates.windows {
+#       name = "Windows11";
+#       uuid = "12345678-1234-1234-1234-123456789abc"; # generate with `uuidgen` TODO
 
-      memory = { count = 10; unit = "GiB"; };
+#       memory = { count = 10; unit = "GiB"; };
 
-      storage_vol = {
-        pool = "default";                  # You must create this pool
-        volume = "windows11.qcow2";        # Existing or created separately
-      };
+#       storage_vol = {
+#         pool = "default";                  # You must create this pool
+#         volume = "windows11.qcow2";        # Existing or created separately
+#       };
 
-      # install_vol = /var/lib/libvirt/images/Win11.iso; # Replace with your ISO path
+#       # install_vol = /var/lib/libvirt/images/Win11.iso; # Replace with your ISO path
 
-      nvram_path = /var/lib/libvirt/images/windows11.nvram;
+#       nvram_path = /var/lib/libvirt/images/windows11.nvram;
 
-      virtio_net = true;
-      virtio_drive = true;
-      install_virtio = true;
-    });
+#       virtio_net = true;
+#       virtio_drive = true;
+#       install_virtio = true;
+#     });
 
-    active = false;
-    # restart = false;
+#     active = false;
+#     # restart = false;
 
-  }
-];
+#   }
+# ];
 
 
 

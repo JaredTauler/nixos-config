@@ -39,7 +39,6 @@
   services.xserver.videoDrivers = ["nvidia"];
 
     boot = {
-    kernelPackages = pkgs.linuxPackages_6_12;      # 6.9.x + 575 today
     kernelModules  = [ "nvidia" "nvidia-drm" ];
     kernelParams   = [ "nvidia_drm.fbdev=0" ];               # keep fb fix
   };
@@ -74,7 +73,7 @@
     # Optionally, you may need to select the appropriate driver version for your specific GPU.
     # package = config.boot.kernelPackages.nvidiaPackages.stable;
     #
-    package = pkgs.unstable.linuxPackages.nvidiaPackages.stable.override {
+    package = pkgs.linuxPackages.nvidiaPackages.stable.override {
       kernel = config.boot.kernelPackages.kernel;
     };
   };
