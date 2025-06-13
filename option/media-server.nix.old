@@ -1,0 +1,117 @@
+{ config, pkgs, lib, ... }:
+
+{
+  # options.mediaServer.enable = lib.mkOption {
+  #   type = lib.types.bool;
+  #   default = false;
+  #   description = "Enable media server with Sonarr, Radarr, and Jellyfin.";
+  # };
+
+  # config = lib.mkIf config.mediaServer.enable {
+  users.groups.media = { };
+  users.users.media = {
+    isSystemUser = true;
+    group = "media";
+  };
+  # users.users.jellyfin = {
+  #   isSystemUser = true;
+  #   group = "media";
+  # };
+  # users.users.sonarr = {
+  #   isSystemUser = true;
+  #   group = "media";
+  # };
+  # users.users.radarr = {
+  #   isSystemUser = true;
+  #   group = "media";
+  # };
+
+  services.jellyseerr = {
+    enable = true;
+  };
+
+  services.jellyfin = {
+    enable = true;
+    openFirewall = true;
+    # dataDir = "/var/lib/jellyfin";
+    # user = "media";
+    # group = "media";
+  };
+
+  # services.nginx.virtualHosts = let
+  #   SSL = {
+  #     enableACME = true;
+  #     forceSSL = true;
+  #   }; in {
+  #     "jellyfin.100toddlers.strangled.net" = (SSL // {
+  #       locations."/".proxyPass = "http://127.0.0.1:8096/";
+
+  #       # serverAliases = [
+  #       #   "100toddlers.strangled.net"
+  #       # ];
+  #     });
+
+  #     # "sub.domain.tld" = (SSL // {
+  #     #   locations."/".proxyPass = "http://127.0.0.1:8081/";
+  #     # });
+  #   };
+
+
+services.nginx = {
+  enable = true;
+  virtualHosts = {
+    "100toddlers.strangled.net" = {
+      forceSSL = true;
+      enableACME = true;
+      serverName = "100toddlers.strangled.net";
+      locations."/" = {
+        proxyPass = "http://127.0.0.1:8096"; # Jellyfin default port
+        # proxySetHeaderHost = "100toddlers.strangled.net";
+        # proxySetHeaderXRealIP = "true";
+        # proxySetHeaderXForwardedFor = "$remote_addr";
+        # proxySetHeaderXForwardedProto = "http";
+      };
+    };
+  };
+};
+
+  security.acme = {
+    acceptTerms = true;                   # Accept Let's Encrypt terms
+    email = "jaredt2003@hotmail.com";      # Replace with your email
+    certs."100toddlers.strangled.net".webroot = "/var/www/acme"; # ACME challenge path
+  };
+
+
+
+
+  services.sonarr = {
+    enable = true;
+    dataDir = "/var/lib/sonarr";
+    user = "media";
+    group = "media";
+  };
+
+  services.radarr = {
+    enable = true;
+    dataDir = "/var/lib/radarr";
+    user = "media";
+    group = "media";
+  };
+
+  # # Add media storage
+  # fileSystems."/media" = {
+  #   device = "/path/to/media";
+  #   fsType = "ext4";
+  # };
+
+  # Expose ports
+  networking.firewall.allowedTCPPorts = [ 8989 7878 5055 80 443 ];
+  # networking.firewall.allowedTCPPorts = [ 80 443 ];
+  # };
+
+  # services.jellyfin = {
+  #   enable = true;
+  #   dataDir = "/var/lib/jellyfin";
+  #   group = "media";
+  # };
+}
