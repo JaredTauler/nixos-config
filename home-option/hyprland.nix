@@ -2,8 +2,6 @@
 , lib
 , config
 , pkgs
-, nix-colors
-, nix-colors-adapters
 , ...
 }:
 let
@@ -22,11 +20,14 @@ let
     buildInputs = oldAttrs.buildInputs ++ [ pkgs.libsForQt5.kguiaddons ];
   });
 
+
+  nix-colors = inputs."nix-colors";     # <- quotes are mandatory
+
 in
 {
-  # imports = [
-  #   nix-colors.homeManagerModules.default
-  # ];
+  imports = [
+    nix-colors.homeManagerModules.default
+  ];
 
   # https://github.com/vfosnar/nix-colors-adapters
   colorScheme = nix-colors.colorSchemes.dracula;

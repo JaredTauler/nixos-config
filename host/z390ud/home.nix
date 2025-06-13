@@ -6,6 +6,7 @@
 }: {
   imports = [
     # nix-colors.homeManagerModules.default
+    ../../base/home.nix
     ../../home-option/hyprland.nix
   ];
 

@@ -5,8 +5,8 @@
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
 
     home-manager = {
-      url = "github:nix-community/home-manager/release-24.11";
-      inputs.nixpkgs.follows = "nixpkgs";
+      url = "github:nix-community/home-manager";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
 
     nixarr.url              = "github:rasmus-kirk/nixarr";
@@ -26,7 +26,10 @@
 
   outputs = { self, ... } @ inputs: {
     nixosConfigurations = {
-      z390ud = import ./host/z390ud { inherit inputs; };
+          z390ud = import ./host/z390ud {
+        inherit inputs;
+      };
+
     };
   };
 }
