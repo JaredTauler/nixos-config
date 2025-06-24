@@ -24,4 +24,6 @@ nixpkgs.lib.nixosSystem {
     # ./hardware.nix
     # ./system.nix
   ];
+
+  
 }

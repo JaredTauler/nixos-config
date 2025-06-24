@@ -1,4 +1,4 @@
-{ config, pkgs, getOption, ... }:
+{ config, pkgs, inputs, ... }:
 let
 
   openrazer-overlay = self: super: {
@@ -36,8 +36,13 @@ in
             ../../option/hyprland.nix
 
        # ../../option/3dprinter.nix
+       #
+       inputs.nix-flatpak.nixosModules.nix-flatpak
 
     ];
+
+  services.flatpak.enable = true;
+
 
 
   services.xserver.enable = true;
@@ -71,7 +76,6 @@ hardware.openrazer.enable = true;
 
 
   environment.systemPackages = with pkgs; [
-
     # xboxdrv
     qemu
 
@@ -80,6 +84,8 @@ hardware.openrazer.enable = true;
     polychromatic
 
     OVMF # TODO for win11
+    #
+   gamescope
 
 
   ];

@@ -22,6 +22,21 @@
       url = "https://flakehub.com/f/AshleyYakeley/NixVirt/*.tar.gz";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+hyprshell = {
+    url = "github:H3rmt/hyprswitch?ref=hyprshell";
+    inputs.nixpkgs.follows = "nixpkgs";
+  };
+
+    rust-overlay = {
+      url = "github:oxalica/rust-overlay";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";  # or "nixpkgs"
+    };
+
+
+      nix-flatpak = {
+    url = "github:gmodena/nix-flatpak";   # track main branch
+    inputs.nixpkgs.follows = "nixpkgs";   # reuse the same nixpkgs
+  };
   };
 
   outputs = { self, ... } @ inputs: {

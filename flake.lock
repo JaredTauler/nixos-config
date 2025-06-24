@@ -103,6 +103,27 @@
         "type": "github"
       }
     },
+    "hyprshell": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1749687640,
+        "narHash": "sha256-86Qvogc+K6NYZLTfRxNPjNcXLPB0j6jk9W0qG5ujsS4=",
+        "owner": "H3rmt",
+        "repo": "hyprswitch",
+        "rev": "f3530ba978c946d0026c63bd89cdd91110a3b6cd",
+        "type": "github"
+      },
+      "original": {
+        "owner": "H3rmt",
+        "ref": "hyprshell",
+        "repo": "hyprswitch",
+        "type": "github"
+      }
+    },
     "nix-colors": {
       "inputs": {
         "base16-schemes": "base16-schemes",
@@ -156,6 +177,21 @@
       "original": {
         "owner": "misterio77",
         "repo": "nix-colors",
+        "type": "github"
+      }
+    },
+    "nix-flatpak": {
+      "locked": {
+        "lastModified": 1749394952,
+        "narHash": "sha256-WbWkzIvB0gqAdBLghdmUpGveY7MlAS2iMj3VEJnJ9yE=",
+        "owner": "gmodena",
+        "repo": "nix-flatpak",
+        "rev": "64c6e53a3999957c19ab95cda78bde466d8374cc",
+        "type": "github"
+      },
+      "original": {
+        "owner": "gmodena",
+        "repo": "nix-flatpak",
         "type": "github"
       }
     },
@@ -261,12 +297,35 @@
       "inputs": {
         "NixVirt": "NixVirt",
         "home-manager": "home-manager",
+        "hyprshell": "hyprshell",
         "nix-colors": "nix-colors",
         "nix-colors-adapters": "nix-colors-adapters",
+        "nix-flatpak": "nix-flatpak",
         "nixarr": "nixarr",
         "nixpkgs": "nixpkgs_2",
         "nixpkgs-unstable": "nixpkgs-unstable",
+        "rust-overlay": "rust-overlay",
         "winapps": "winapps"
+      }
+    },
+    "rust-overlay": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs-unstable"
+        ]
+      },
+      "locked": {
+        "lastModified": 1749782305,
+        "narHash": "sha256-h6jWS89SZyI5ACe/Ac2Yn7Qf+Uhb1yawbtpEqgV1h8E=",
+        "owner": "oxalica",
+        "repo": "rust-overlay",
+        "rev": "dc62b7639a9dcab4ab1246876fd0df8412a4a824",
+        "type": "github"
+      },
+      "original": {
+        "owner": "oxalica",
+        "repo": "rust-overlay",
+        "type": "github"
       }
     },
     "systems": {

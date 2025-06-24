@@ -5,6 +5,24 @@
 , ...
 }:
 let
+
+  # Build hyprshell with latest rust
+  pkgsWithRust = import inputs.nixpkgs {
+    system   = pkgs.system;
+    overlays = [ inputs.rust-overlay.overlays.default ];
+  };
+
+  rustNightly = pkgsWithRust.rust-bin.nightly.latest.default;
+
+  hyprshellNightly =
+    inputs.hyprshell.packages.${pkgs.system}.hyprshell.override {
+      rustPlatform = pkgs.makeRustPlatform {
+        cargo = rustNightly;
+        rustc = rustNightly;
+      };
+    };
+
+
   # Build flameshot to work with wl-roots compositor
   flameshotGrim = pkgs.flameshot.overrideAttrs (oldAttrs: {
     src = pkgs.fetchFromGitHub {
@@ -27,6 +45,7 @@ in
 {
   imports = [
     nix-colors.homeManagerModules.default
+    inputs.hyprshell.homeModules.hyprshell
   ];
 
   # https://github.com/vfosnar/nix-colors-adapters
@@ -48,6 +67,7 @@ in
   };
 
   home.packages = with pkgs; [
+
     grim # For flameshot
     wlr-layout-ui # For changing monitor config
     pavucontrol # For sound
@@ -234,7 +254,25 @@ in
     "custom_color=rgba(0,0,0,1)"
   ];
 
+   programs.hyprshell = {
+     package = hyprshellNightly;
+    enable = true;
+    systemd.args = "-v";
+    settings = {
+      launcher = {
+        max_items = 6;
+        plugins.websearch = {
+            enable = true;
+            engines = [{
+                name = "DuckDuckGo";
+                url = "https://duckduckgo.com/?q=%s";
+                key = "d";
+            }];
+        };
+      };
 
+    };
+   };
 
 
 }

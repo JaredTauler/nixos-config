@@ -71,11 +71,7 @@
     nvidiaSettings = true;
 
     # Optionally, you may need to select the appropriate driver version for your specific GPU.
-    # package = config.boot.kernelPackages.nvidiaPackages.stable;
-    #
-    package = pkgs.linuxPackages.nvidiaPackages.stable.override {
-      kernel = config.boot.kernelPackages.kernel;
-    };
+    package = config.boot.kernelPackages.nvidiaPackages.beta;
   };
 
   hardware.steam-hardware.enable = true;
