@@ -7,10 +7,17 @@ let
         });
   };
 
+  freerdp-overlay = import ../../overlay/freerdp.nix;
+
 in
 {
   # nixpkgs.hostPlatform = pkgs.lib.systems.x86_6 4-linux;
   nixpkgs.system = "x86_64-linux";
+
+  nixpkgs.overlays = [
+    freerdp-overlay
+  ];
+
   system.stateVersion = "24.05";
 
   boot.loader.systemd-boot.enable = true;
@@ -33,11 +40,12 @@ in
       ./video.nix
 
       ../../option/printer/epson-et3750.nix
-            ../../option/hyprland.nix
+      ../../option/hyprland.nix
 
        # ../../option/3dprinter.nix
        #
        inputs.nix-flatpak.nixosModules.nix-flatpak
+       inputs.NixVirt.nixosModules.default
 
     ];
 
@@ -56,7 +64,7 @@ in
     enable = true;
     setSocketVariable = true;
   };
-  users.users.jared.extraGroups = [ "docker" "libvirtd" "openrazer" "dialout"];
+  users.users.jared.extraGroups = [ "docker" "libvirtd" "kvm" "openrazer" "dialout"];
 
 
 
@@ -86,6 +94,14 @@ hardware.openrazer.enable = true;
     OVMF # TODO for win11
     #
    gamescope
+
+    virt-manager
+
+    qdirstat
+    gparted
+
+    inputs.winapps.packages."${pkgs.system}".winapps
+    inputs.winapps.packages."${pkgs.system}".winapps-launcher
 
 
   ];
@@ -131,7 +147,7 @@ hardware.openrazer.enable = true;
   # virtualisation.libvirt.enable = true;
   # programs.virt-manager.enable = true;
   # boot.extraModprobeConfig = ''
-  #   options kvm_intel nested=1
+  #   Options kvm_intel nested=1
   #   options kvm_intel emulate_invalid_guest_state=0
   #   options kvm ignore_msrs=1
   # '';
@@ -160,51 +176,49 @@ hardware.openrazer.enable = true;
 
 boot.supportedFilesystems = [ "ntfs" ];
 
-  # Useless with current hardware
 
-  # services.ollama = {
-  #   enable = true;
-  #   acceleration = "rocm";
-  #   environmentVariables = {
-  #     HCC_AMDGPU_TARGET = "gfx803"; # used to be necessary, but doesn't seem to anymore
-  #   };
-  #   rocmOverrideGfx = "8.0.3";
-  # };
+# NixVirt
+virtualisation.libvirt = {
+  enable = true;
+  swtpm.enable = true;
+  verbose = true;
 
-# virtualisation.libvirtd = {
-#   enable = true;               # you probably have this already
-#   qemu.swtpm.enable = true;    # ← **THIS is the missing bit**
-#   # (optional, but useful)
-#   qemu.ovmf.enable = true;     # UEFI firmware, Secure Boot, etc.
-# };
-# virtualisation.libvirt.swtpm.enable = true; # TPM shit
-# virtualisation.libvirt.connections."qemu:///system".domains = [
-#   {
-#     definition = NixVirt.lib.domain.writeXML (NixVirt.lib.domain.templates.windows {
-#       name = "Windows11";
-#       uuid = "12345678-1234-1234-1234-123456789abc"; # generate with `uuidgen` TODO
 
-#       memory = { count = 10; unit = "GiB"; };
+};
 
-#       storage_vol = {
-#         pool = "default";                  # You must create this pool
-#         volume = "windows11.qcow2";        # Existing or created separately
-#       };
 
-#       # install_vol = /var/lib/libvirt/images/Win11.iso; # Replace with your ISO path
+#
+virtualisation.libvirt.connections."qemu:///system".domains = [
+  {
+    definition = inputs.NixVirt.lib.domain.writeXML (inputs.NixVirt.lib.domain.templates.windows {
+      name = "RDPWindows";
+      uuid = "13f0f0bd-a464-492b-832f-a7b07cd0ee4f";
 
-#       nvram_path = /var/lib/libvirt/images/windows11.nvram;
+      memory = { count = 10; unit = "GiB"; };
 
-#       virtio_net = true;
-#       virtio_drive = true;
-#       install_virtio = true;
-#     });
+      storage_vol = {
+        pool = "default";                  # You must create this pool
+        volume = "win11.qcow2";        # Existing or created separately
+      };
 
-#     active = false;
-#     # restart = false;
+       install_vol = "/var/lib/libvirt/images/Win11.iso"; # Replace with your ISO path
+       nvram_path = "/var/lib/libvirt/qemu/nvram/win11_VARS.fd";
 
-#   }
-# ];
+
+      virtio_net = true;
+      virtio_drive = true;
+      install_virtio = true;
+
+      secure = true;
+
+      
+    });
+
+    active = true;
+    restart = false;
+
+  }
+];
 
 
 

@@ -42,7 +42,9 @@ hyprshell = {
   outputs = { self, ... } @ inputs: {
     nixosConfigurations = {
           z390ud = import ./host/z390ud {
-        inherit inputs;
+          inherit inputs;
+
+
       };
 
     };

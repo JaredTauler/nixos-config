@@ -1,4 +1,4 @@
-{ config, pkgs,  ... }:
+{ config, pkgs, lib,  ... }:
 {
 
   environment.systemPackages = with pkgs; [
@@ -23,8 +23,12 @@
       # mesa.drivers
 
 
+
     ];
   };
+
+
+  
 
   # hardware.amdgpu = {
   #   amdvlk = {
@@ -36,7 +40,14 @@
   #   };
   # };
   #
-  services.xserver.videoDrivers = ["nvidia"];
+  #
+  #
+  # environment.sessionVariables = {
+  #   WLR_DRM_DEVICES = "/dev/dri/by-path/pci-0000:05:00.0-card";
+  #   LD_LIBRARY_PATH = lib.mkBefore "/run/opengl-driver/lib:/run/opengl-driver-32/lib:";
+  # };
+
+  services.xserver.videoDrivers = ["amdgpu" "nvidia"];
 
     boot = {
     kernelModules  = [ "nvidia" "nvidia-drm" ];
@@ -44,6 +55,15 @@
   };
 
   hardware.nvidia = {
+      prime = {
+    offload = {
+      enable = true;
+      enableOffloadCmd = true;
+    };
+
+    nvidiaBusId = "PCI:1:0:0";
+    amdgpuBusId = "PCI:5:0:0";
+  };
 
     # Modesetting is required.
     modesetting.enable = true;
@@ -84,9 +104,21 @@
   # };
   #
   #
-  environment.variables = {
-  __GLX_VENDOR_LIBRARY_NAME = "nvidia";
-  GBM_BACKEND              = "nvidia-drm";
-  __GL_GSYNC_ALLOWED       = "0";   # disables the VRR path that blanks some titles
-};
+ #  environment.variables = {
+#   __GLX_VENDOR_LIBRARY_NAME = "nvidia";
+#   GBM_BACKEND              = "nvidia-drm";
+#   __GL_GSYNC_ALLOWED       = "0";   # disables the VRR path that blanks some titles
+# };
+
+
+  services.udev.extraRules = ''
+  # 61-mutter-primary-gpu.rules
+  SUBSYSTEM=="drm", ENV{DEVTYPE}=="drm_minor", \
+  SUBSYSTEMS=="pci", KERNELS=="0000:05:00.0", \
+  TAG+="mutter-device-preferred-primary"
+'';
+
+  
+
+  systemd.services.display-manager.after = [ "systemd-udev-settle.service" ];
 }
