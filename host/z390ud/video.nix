@@ -31,25 +31,28 @@
   
 
   # hardware.amdgpu = {
-  #   amdvlk = {
-  #     enable = true;
-  #     support32Bit.enable = true;
-  #   };
-  #   opencl = {
-  #     enable = true;
-  #   };
-  # };
-  #
-  #
-  #
-  # environment.sessionVariables = {
-  #   WLR_DRM_DEVICES = "/dev/dri/by-path/pci-0000:05:00.0-card";
-  #   LD_LIBRARY_PATH = lib.mkBefore "/run/opengl-driver/lib:/run/opengl-driver-32/lib:";
+  #   # amdvlk = {
+  #   #   enable = true;
+  #   #   support32Bit.enable = true;
+  #   # };
+  #   #
+  #   # opencl = {
+  #   #   enable = true;
+  #   # };
   # };
 
-  services.xserver.videoDrivers = ["amdgpu" "nvidia"];
+  #
+  #
+  #
+  #TODO i dont think this does shit
+  environment.sessionVariables = {
+    WLR_DRM_DEVICES = "/dev/dri/by-path/pci-0000:05:00.0-card";
+    # LD_LIBRARY_PATH = lib.mkBefore "/run/opengl-driver/lib:/run/opengl-driver-32/lib:";
+  };
 
-    boot = {
+  services.xserver.videoDrivers = ["amdgpu""nvidia"];
+
+  boot = {
     kernelModules  = [ "nvidia" "nvidia-drm" ];
     kernelParams   = [ "nvidia_drm.fbdev=0" ];               # keep fb fix
   };
@@ -64,38 +67,20 @@
     nvidiaBusId = "PCI:1:0:0";
     amdgpuBusId = "PCI:5:0:0";
   };
-
-    # Modesetting is required.
-    modesetting.enable = true;
-
-    # Nvidia power management. Experimental, and can cause sleep/suspend to fail.
-    # Enable this if you have graphical corruption issues or application crashes after waking
-    # up from sleep. This fixes it by saving the entire VRAM memory to /tmp/ instead
-    # of just the bare essentials.
+    modesetting.enable = false;
     powerManagement.enable = true;
 
-    # Fine-grained power management. Turns off GPU when not in use.
-    # Experimental and only works on modern Nvidia GPUs (Turing or newer).
-    powerManagement.finegrained = false;
-
-    # Use the NVidia open source kernel module (not to be confused with the
-    # independent third-party "nouveau" open source driver).
-    # Support is limited to the Turing and later architectures. Full list of
-    # supported GPUs is at:
-    # https://github.com/NVIDIA/open-gpu-kernel-modules#compatible-gpus
-    # Only available from driver 515.43.04+
+   powerManagement.finegrained = false;
     open = true;
 
-    # Enable the Nvidia settings menu,
-	# accessible via `nvidia-settings`.
-    nvidiaSettings = true;
+   nvidiaSettings = true;
 
     # Optionally, you may need to select the appropriate driver version for your specific GPU.
     package = config.boot.kernelPackages.nvidiaPackages.beta;
   };
 
-  hardware.steam-hardware.enable = true;
-  
+  # hardware.steam-hardware.enable = true;
+
   # hardware.pulseaudio = {
   #   enable = false;
   #   extraConfig = ''
@@ -104,21 +89,19 @@
   # };
   #
   #
- #  environment.variables = {
-#   __GLX_VENDOR_LIBRARY_NAME = "nvidia";
-#   GBM_BACKEND              = "nvidia-drm";
-#   __GL_GSYNC_ALLOWED       = "0";   # disables the VRR path that blanks some titles
-# };
 
 
-  services.udev.extraRules = ''
-  # 61-mutter-primary-gpu.rules
-  SUBSYSTEM=="drm", ENV{DEVTYPE}=="drm_minor", \
-  SUBSYSTEMS=="pci", KERNELS=="0000:05:00.0", \
-  TAG+="mutter-device-preferred-primary"
+boot.blacklistedKernelModules = [ "nvidia" "nvidia_drm" "nvidia_modeset" "nvidia_uvm" ];
+
+environment.etc."environment.d/10-amd-gpu.conf".text = ''
+  WLR_DRM_DEVICES=/dev/dri/by-path/pci-0000:05:00.0-card
 '';
 
-  
+# Put nvidia card on its own seat
+services.udev.extraRules = ''
+  # Put every NVIDIA DRM device on its own seat the compositor never touches
+  SUBSYSTEM=="drm", KERNEL=="card*",    ATTRS{vendor}=="0x10de", ENV{ID_SEAT}="seat-nvidia"
+  SUBSYSTEM=="drm", KERNEL=="renderD*", ATTRS{vendor}=="0x10de", ENV{ID_SEAT}="seat-nvidia"
+'';
 
-  systemd.services.display-manager.after = [ "systemd-udev-settle.service" ];
 }

@@ -1,12 +1,19 @@
 final: prev: {
   freerdp = prev.freerdp.overrideAttrs (_: {
-    version = "3.16.0";
+    version = "unstable-2025-06-28";
     src = prev.fetchFromGitHub {
       owner  = "FreeRDP";
       repo   = "FreeRDP";
-      rev    = "fcdf4c65f79b2ab3b9d2af7d9a9fa25b7d5f824d";
-      hash   = "sha256:385af54245560493698730b688b5e6e5d56d5c7ecf2fa7c1d7cedfde8a4ba456";
+      rev    = "b1f0b2b00f4e90ce1d2bc8fb33ae15bfd1ac4e23";
+      hash   = "sha256:1q2zgcw22hx2yri62nlg6hapg2w14i1kb1g7ih1cigfr9bw796xd";
     };
-    cmakeFlags = [ "-DWITH_SDL3=ON" ];
+    cmakeFlags = [
+      "-DWITH_WAYLAND=ON"
+      "-DWITH_SDL3=ON"
+      "-DCMAKE_INSTALL_LIBDIR=lib"
+      "-DCMAKE_INSTALL_FULL_LIBDIR=${placeholder "out"}/lib"
+    ];
+
+    
   });
 }

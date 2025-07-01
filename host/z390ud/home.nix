@@ -23,11 +23,19 @@
 
     prismlauncher
 
-    jetbrains.webstorm
+    (jetbrains.webstorm.override {
+      vmopts = ''
+             -Dawt.toolkit.name=WLToolkit
+             '';
+    })
 
 
 
   ];
+
+
+
+  
 
 
 

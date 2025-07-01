@@ -38,6 +38,7 @@ in
     [
       ./hardware.nix
       ./video.nix
+      ./vfio.nix
 
       ../../option/printer/epson-et3750.nix
       ../../option/hyprland.nix
@@ -55,8 +56,8 @@ in
 
   services.xserver.enable = true;
 
-  services.xserver.displayManager.gdm.enable = true;
-  services.xserver.desktopManager.gnome.enable = true;
+  services.xserver.displayManager.gdm.enable = false;
+  services.xserver.desktopManager.gnome.enable = false;
   # services.xserver.desktopManager.xfce.enable = true;
   # services.xserver.windowManager.exwm.enable = true;
 
@@ -84,6 +85,8 @@ hardware.openrazer.enable = true;
 
 
   environment.systemPackages = with pkgs; [
+    pciutils
+
     # xboxdrv
     qemu
 
@@ -100,6 +103,7 @@ hardware.openrazer.enable = true;
     qdirstat
     gparted
 
+    freerdp
     inputs.winapps.packages."${pkgs.system}".winapps
     inputs.winapps.packages."${pkgs.system}".winapps-launcher
 
@@ -185,8 +189,10 @@ virtualisation.libvirt = {
 
 
 };
-
-
+users.users.qemu.isSystemUser = true;
+users.users.qemu.group = "qemu";
+users.groups.qemu = {};
+users.users.qemu.extraGroups = [ "render" "video" ];   # /dev/dri/* ACLs
 #
 virtualisation.libvirt.connections."qemu:///system".domains = [
   {
@@ -228,4 +234,14 @@ virtualisation.libvirt.connections."qemu:///system".domains = [
 # };
 
 
+
+
+  programs.evolution = {
+    enable  = true;                       # pulls the wrapped binary
+    plugins = [ pkgs.evolution-ews ];     # Exchange Web-Services plug-in
+  };
+
+  ## Session plumbing Evolution relies on
+  services.gnome.gnome-keyring.enable = true;
+  programs.dconf.enable               = true;
 }
