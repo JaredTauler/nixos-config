@@ -66,6 +66,10 @@ in
     };
   };
 
+
+
+  
+
   home.packages = with pkgs; [
 
     grim # For flameshot
@@ -170,7 +174,7 @@ in
     systemd.enable = false;
     plugins = [
       pkgs.hyprlandPlugins.hyprsplit
-      pkgs.hyprlandPlugins.hyprexpo
+      pkgs.hyprlandPlugins.hyprspace
     ];
 
     settings = {
@@ -187,15 +191,7 @@ in
 
       source = "~/nixos-config/home-option/hyprland.conf";
     };
-    # FIXME i want hyprland conf to symbolic link so it can be changed without
-    # extraConfig = ''
-    #   	  ${builtins.readFile ./hyprland.conf}
-    #   	'';
   };
-
-  # TODO think of a better name lol
-  # FIXME how to relatively target?
-  # home.file.".config/hypr/symbolic.conf".source = "home-option/hyprland.conf";
 
 
   # https://mynixos.com/home-manager/options/programs.waybar
