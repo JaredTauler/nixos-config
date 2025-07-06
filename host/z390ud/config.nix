@@ -37,7 +37,7 @@ in {
     ./video.nix
     ./vfio.nix
     ./vm.nix
-    ./davmail.nix
+    ./emacs.nix
 
     ../../option/printer/epson-et3750.nix
     ../../option/hyprland.nix
@@ -54,6 +54,7 @@ in {
   services.xserver.enable = true;
 
   services.xserver.displayManager.gdm.enable = true;
+
 
   # services.xserver.desktopManager.xfce.enable = true;
   # services.xserver.windowManager.exwm.enable = true;

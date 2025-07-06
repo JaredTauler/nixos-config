@@ -1,0 +1,6 @@
+[Parent 277647, Main Thread] WARNING: AT-SPI: Error retrieving accessibility bus address: org.freedesktop.DBus.Error.ServiceUnknown: The name is not activatable: 'glib warning', file /build/thunderbird-138.0.1/toolkit/xre/nsSigHandlers.cpp:201
+
+(thunderbird:277647): dbind-WARNING **: 23:43:32.225: AT-SPI: Error retrieving accessibility bus address: org.freedesktop.DBus.Error.ServiceUnknown: The name is not activatable
+[Parent 277647, Main Thread] WARNING: Failed to connect to proxy: 'glib warning', file /build/thunderbird-138.0.1/toolkit/xre/nsSigHandlers.cpp:201
+
+(thunderbird:277647): libnotify-WARNING **: 23:43:38.256: Failed to connect to proxy
