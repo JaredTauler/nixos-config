@@ -1,13 +1,16 @@
 { config, lib, pkgs, ... }:
 
 {
-   environment.systemPackages = with pkgs; [
-     cmake
-     make
-     editorconfig
-     npm
-     tidy
-     stylelint
-     js-beautify
-   ];
+  # system-wide tools
+  environment.systemPackages = with pkgs; [
+    nodejs_20
+    html-tidy
+    nodePackages.stylelint
+    nodePackages."js-beautify"
+
+    gcc
+    gnumake          # provides `make`
+    cmake            # some grammars need it
+    git              # to clone grammar repos
+  ];
 }

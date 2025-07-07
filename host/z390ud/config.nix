@@ -104,6 +104,15 @@ in {
     inputs.winapps.packages."${pkgs.system}".winapps
     inputs.winapps.packages."${pkgs.system}".winapps-launcher
 
+
+       #  (android-studio.override {
+    #   vmopts = ''
+    #          -Dawt.toolkit.name=sun.awt.X11.XToolkit
+    #   '';
+    # })
+
+
+
   ];
   # nixpkgs.overlays = [
   #   openrazer-overlay

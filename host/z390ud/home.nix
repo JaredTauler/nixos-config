@@ -10,18 +10,14 @@
     inputs.nix-flatpak.homeManagerModules.nix-flatpak
     ../../base/home.nix
     ../../home-option/hyprland.nix
+    ../../home-option/emacs.nix
   ];
 
 
 
 
   home.packages = with pkgs; [
-    emacs30-pgtk
-
-    pandoc # TODO
-    texliveFull
-
-    prismlauncher
+   prismlauncher
 
     jetbrains.webstorm
     # (jetbrains.webstorm.override {
@@ -32,7 +28,7 @@
     #     -Dsun.java2d.xrender=true
     #   '';
 #    })
-
+#
 
     discord-canary
   ];
