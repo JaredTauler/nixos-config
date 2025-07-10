@@ -1,20 +1,8 @@
 { config, pkgs, inputs, ... }:
 let
 
-  # openrazer-overlay = self: super: {
-  #   openrazer-daemon = super.openrazer-daemon.overrideAttrs (oldAttrs: {
-  #     nativeBuildInputs = (oldAttrs.nativeBuildInputs or [ ]) ++ [
-  #       pkgs.gobject-introspection
-  #       pkgs.wrapGAppsHook3
-  #       pkgs.python3Packages.wrapPython
-  #     ];
-  #   });
-  # };
-
-  # freerdp-overlay = import ../../overlay/freerdp.nix;
 
 in {
-  # nixpkgs.hostPlatform = pkgs.lib.systems.x86_6 4-linux;
   nixpkgs.system = "x86_64-linux";
 
 

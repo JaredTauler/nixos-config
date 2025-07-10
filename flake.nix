@@ -39,19 +39,14 @@
     };
   };
 
- outputs = { self, nixpkgs, home-manager, ... }:
-   let
-      inputs = { inherit self nixpkgs home-manager; };
+  outputs = { self, ... } @ inputs: {
+    nixosConfigurations = {
+      z390ud = import ./host/z390ud {
+        inherit inputs;
 
-      hostDirs = builtins.readDir ./host;
 
-      hostNames = builtins.attrNames hostDirs;
-    in {
-      nixosConfigurations = builtins.listToAttrs (map (host: {
-        name = host;
-        value = import ./base/cluster.nix {
-          inherit nixpkgs host inputs;
-        };
-      }) hostNames);
+      };
+
     };
+  };
 }

@@ -1,5 +1,9 @@
-{ nixpkgs, host, inputs }:
+{ inputs }:
 
+let
+  nixpkgs = inputs."nixpkgs-unstable";
+  host = "fa506ih";
+in
 nixpkgs.lib.nixosSystem {
 
 
@@ -7,7 +11,7 @@ nixpkgs.lib.nixosSystem {
     inherit inputs host;
   };
   modules = [
-
+ 
     ../../base/config.nix
     ./config.nix
     ./hardware-configuration.nix
