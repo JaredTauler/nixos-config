@@ -23,24 +23,9 @@ let
     };
 
 
-  # Build flameshot to work with wl-roots compositor
-  flameshotGrim = pkgs.flameshot.overrideAttrs (oldAttrs: {
-    src = pkgs.fetchFromGitHub {
-      owner = "flameshot-org";
-      repo = "flameshot";
-      rev = "3d21e4967b68e9ce80fb2238857aa1bf12c7b905";
-      sha256 = "sha256-OLRtF/yjHDN+sIbgilBZ6sBZ3FO6K533kFC1L2peugc=";
-    };
-    cmakeFlags = [
-      "-DUSE_WAYLAND_CLIPBOARD=1"
-      "-DUSE_WAYLAND_GRIM=1"
-    ];
-    buildInputs = oldAttrs.buildInputs ++ [ pkgs.libsForQt5.kguiaddons ];
-  });
 
 
-  nix-colors = inputs."nix-colors";     # <- quotes are mandatory
-
+    nix-colors = inputs."nix-colors";
 in
 {
   imports = [
@@ -68,22 +53,22 @@ in
 
 
 
-  
+
 
   home.packages = with pkgs; [
 
     grim # For flameshot
     wlr-layout-ui # For changing monitor config
     pavucontrol # For sound
-    
+
     jq
     slurp
     swappy
     wl-clipboard
 
 
-        # Core KIO framework (implements file:// URIs)
-   # kde.kio
+    # Core KIO framework (implements file:// URIs)
+    # kde.kio
 
     # Optional extras: thumbnailers, smb, sftp, mtp, etc.
     #kde.kio-extras
@@ -102,70 +87,70 @@ in
     };
     style = ''
       window {
-         margin: 5px;
-         background-color: #${config.colorScheme.palette.base00};
-         opacity: 1.0;
-         font-size: 15px;
-         font-family: JetBrainsMonoNL NF;
-         border-radius: 10px;
-         border: 5px solid #${config.colorScheme.palette.base03};
-       }
+      margin: 5px;
+      background-color: #${config.colorScheme.palette.base00};
+      opacity: 1.0;
+      font-size: 15px;
+      font-family: JetBrainsMonoNL NF;
+      border-radius: 10px;
+      border: 5px solid #${config.colorScheme.palette.base03};
+      }
 
-       #outer-box {
-         margin: 5px;
-         border: 5px;
-         border-radius: 10px;
-       }
+      #outer-box {
+      margin: 5px;
+      border: 5px;
+      border-radius: 10px;
+      }
 
-       #input {
-         margin: 5px;
-         background-color: #${config.colorScheme.palette.base01};
-         color: #${config.colorScheme.palette.base05};
-         font-size: 15px;
-         border: 5px;
-         border-radius: 10px;
-       }
+      #input {
+      margin: 5px;
+      background-color: #${config.colorScheme.palette.base01};
+      color: #${config.colorScheme.palette.base05};
+      font-size: 15px;
+      border: 5px;
+      border-radius: 10px;
+      }
 
-       #inner-box {
-         background-color: #${config.colorScheme.palette.base00};
-         border: 5px;
-         border-radius: 10px;
-       }
+      #inner-box {
+      background-color: #${config.colorScheme.palette.base00};
+      border: 5px;
+      border-radius: 10px;
+      }
 
-       #scroll {
-         font-size: 15px;
-         color: #${config.colorScheme.palette.base0F};
-         margin: 10px;
-         border-radius: 5px;
-       }
+      #scroll {
+      font-size: 15px;
+      color: #${config.colorScheme.palette.base0F};
+      margin: 10px;
+      border-radius: 5px;
+      }
 
-       #scroll label {
-         margin: 0px 0px;
-       }
+      #scroll label {
+      margin: 0px 0px;
+      }
 
-       #entry {
-         margin: 5px;
-         background-color: #${config.colorScheme.palette.base01};
-         border-radius: 10px;
-         border: 5px;
-       }
-       #entry:selected {
-         background-color: #${config.colorScheme.palette.base02};
-         border: 5px solid #${config.colorScheme.palette.base03};
-         border-radius: 10px;
-         border: 5px;
-       }
+      #entry {
+      margin: 5px;
+      background-color: #${config.colorScheme.palette.base01};
+      border-radius: 10px;
+      border: 5px;
+      }
+      #entry:selected {
+      background-color: #${config.colorScheme.palette.base02};
+      border: 5px solid #${config.colorScheme.palette.base03};
+      border-radius: 10px;
+      border: 5px;
+      }
 
-       #img {
-         margin: 5px;
-         border-radius: 5px;
-       }
+      #img {
+      margin: 5px;
+      border-radius: 5px;
+      }
 
-       #text {
-         margin: 2px;
-         border: none;
-         color: #${config.colorScheme.palette.base05};
-       }
+      #text {
+      margin: 2px;
+      border: none;
+      color: #${config.colorScheme.palette.base05};
+      }
     '';
   };
 
@@ -189,7 +174,7 @@ in
 
         ];
 
-      source = "~/nixos-config/home-option/hyprland.conf";
+        source = "~/nixos-config/home-option/hyprland.conf";
     };
   };
 
@@ -211,14 +196,14 @@ in
     settings = {
       listener = [
         # {
-        #   timeout = 900;
-        #   # on-timeout = "hyprlock";
-        # }
-        {
-          timeout = 300 ;
-          on-timeout = "hyprctl dispatch dpms off";
-          on-resume = "hyprctl dispatch dpms on";
-        }
+          #   timeout = 900;
+          #   # on-timeout = "hyprlock";
+          # }
+          {
+            timeout = 300 ;
+            on-timeout = "hyprctl dispatch dpms off";
+            on-resume = "hyprctl dispatch dpms on";
+          }
       ];
     };
   };
@@ -226,10 +211,6 @@ in
 
 
 
-  services.flameshot = {
-    enable = true;
-    package = flameshotGrim;
-  };
 
 
 
@@ -250,25 +231,25 @@ in
     "custom_color=rgba(0,0,0,1)"
   ];
 
-   programs.hyprshell = {
-     package = hyprshellNightly;
+  programs.hyprshell = {
+    package = hyprshellNightly;
     enable = true;
     systemd.args = "-v";
     settings = {
       launcher = {
         max_items = 6;
         plugins.websearch = {
-            enable = true;
-            engines = [{
-                name = "DuckDuckGo";
-                url = "https://duckduckgo.com/?q=%s";
-                key = "d";
-            }];
+          enable = true;
+          engines = [{
+            name = "DuckDuckGo";
+            url = "https://duckduckgo.com/?q=%s";
+            key = "d";
+          }];
         };
       };
 
     };
-   };
+  };
 
 
 }

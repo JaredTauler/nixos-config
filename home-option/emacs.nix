@@ -20,6 +20,7 @@
     texliveFull
 
     nixd
+    nixfmt
 
     nodejs_20
     html-tidy

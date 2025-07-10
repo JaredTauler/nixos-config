@@ -45,41 +45,19 @@ in {
     # TODO 3d printer
     # ../../option/3dprinter.nix
 
-    inputs.nix-flatpak.nixosModules.nix-flatpak
-    inputs.NixVirt.nixosModules.default
 
   ];
-
-  services.flatpak.enable = true;
-
   services.xserver.enable = true;
 
   services.xserver.displayManager.gdm.enable = true;
-    services.xserver.desktopManager.gnome.enable = true;
+  services.xserver.desktopManager.gnome.enable = true;
 
 
 
   environment.systemPackages = with pkgs; [
-    pciutils
-    direnv
 
-    # xboxdrv
-    qemu
 
     davinci-resolve
-    openrazer-daemon
-    polychromatic
-
-    OVMF # TODO for win11
-    #
-    gamescope
-
-    virt-manager
-
-    qdirstat
-    gparted
-
-    nixfmt
   ];
 
   services.openssh = {

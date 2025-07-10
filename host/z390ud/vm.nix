@@ -1,7 +1,10 @@
 { config, lib, pkgs, inputs, ... }:
 
 {
+  imports = [
+        inputs.NixVirt.nixosModules.default
 
+  ];
 
     environment.systemPackages = with pkgs; [
     qemu

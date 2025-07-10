@@ -4,6 +4,8 @@
 , pkgs
 , ...
 }: {
+  home.stateVersion = "24.05";
+
   imports = [
     # nix-colors.homeManagerModules.default
     #
@@ -17,20 +19,9 @@
 
 
   home.packages = with pkgs; [
-   prismlauncher
+    prismlauncher
 
     jetbrains.webstorm
-    # (jetbrains.webstorm.override {
-    #   vmopts = ''
-    #     -Dawt.toolkit.name=WLToolkit
-    #     -Dawt.useSystemAAFontSettings=on
-    #     -Dswing.aatext=true
-    #     -Dsun.java2d.xrender=true
-    #   '';
-#    })
-#
-
-    discord-canary
   ];
 
 
@@ -78,7 +69,7 @@
 
 
 
-    gtk = {
+  gtk = {
     enable = true;
 
     theme = {
