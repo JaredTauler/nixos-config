@@ -1,6 +1,15 @@
 { config, lib, pkgs, inputs, ... }:
 
 {
+
+
+    environment.systemPackages = with pkgs; [
+    qemu
+    OVMF # TODO for win11
+    virt-manager
+  ];
+
+
   users.users.jared.extraGroups = [ "libvirtd" "kvm" "video" "render" ];
 
   # NixVirt

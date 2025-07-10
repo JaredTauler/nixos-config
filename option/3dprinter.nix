@@ -18,6 +18,7 @@
     slic3r
   ];
 
+  # For serial
   users.users.jared.extraGroups = [ "dialout" ];
 
   services.udev.extraRules = ''
