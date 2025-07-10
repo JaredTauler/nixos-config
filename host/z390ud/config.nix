@@ -54,6 +54,7 @@ in {
   services.xserver.enable = true;
 
   services.xserver.displayManager.gdm.enable = true;
+    services.xserver.desktopManager.gnome.enable = true;
 
 
   # services.xserver.desktopManager.xfce.enable = true;
@@ -65,22 +66,23 @@ in {
   };
   users.users.jared.extraGroups = [ "docker" "openrazer" "dialout" ];
 
-  networking.firewall.enable = false;
-  networking.firewall.interfaces."enp4s0".allowedTCPPorts = [
-    # Minecraft
-    25565
-    25566
+  # networking.firewall.enable = false;
+  # networking.firewall.interfaces."enp4s0".allowedTCPPorts = [
+  #   # Minecraft
+  #   25565
+  #   25566
 
-    # Abiotic Factor
-    7777
-    27015
-  ];
+  #   # Abiotic Factor
+  #   7777
+  #   27015
+  # ];
 
   hardware.openrazer.enable = true;
   # services.udev.extraRules = '' SUBSYSTEM=="usb", ATTR{idVendor}=="2dc8", ATTR{idProduct}=="310a", ATTR{manufacturer}=="8BitDo", RUN+="${pkgs.systemd}/bin/systemctl start 8bitdo-ultimate-xinput@2dc8:310a" # This device (2dc8:3016) is "connected" when the above device disconnects SUBSYSTEM=="usb", ATTR{idVendor}=="2dc8", ATTR{idProduct}=="301a", ATTR{manufacturer}=="8BitDo", RUN+="${pkgs.systemd}/bin/systemctl stop 8bitdo-ultimate-xinput@2dc8:310a" '';
 
   environment.systemPackages = with pkgs; [
     pciutils
+    direnv
 
     # xboxdrv
     qemu
