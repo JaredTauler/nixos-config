@@ -18,7 +18,6 @@
 
 
   imports = [
-    ./emacs.nix
     ../../option/hyprland.nix
 
     # TODO 3d printer

@@ -46,7 +46,9 @@
 
 
       };
-
+	fa506ih = import ./host/fa506ih {
+		inherit inputs;
+	};
     };
   };
 }
