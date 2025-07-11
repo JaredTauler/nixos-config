@@ -19,10 +19,7 @@ nixpkgs.lib.nixosSystem {
     inputs.home-manager.nixosModules.home-manager
     {
 
-      home-manager.users.jared = import [
-        ../../base/home.nix
-        ./home.nix
-      ];
+      home-manager.users.jared = import ./home.nix;
       home-manager.extraSpecialArgs = { inherit inputs; };
     }
 

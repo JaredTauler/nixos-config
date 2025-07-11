@@ -19,6 +19,7 @@
 
   imports = [
     ../../option/hyprland.nix
+./video.nix
 
     # TODO 3d printer
     # ../../option/3dprinter.nix

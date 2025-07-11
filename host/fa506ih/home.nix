@@ -1,4 +1,4 @@
-{ config, lib, pkgs, ... }:
+{ inputs, config, lib, pkgs, ... }:
 
 {
     home.stateVersion = "25.05";
@@ -6,6 +6,7 @@
   imports = [
     # nix-colors.homeManagerModules.default
     #
+	../../base/home.nix
     inputs.nix-flatpak.homeManagerModules.nix-flatpak
     ../../home-option/hyprland.nix
     ../../home-option/emacs.nix
