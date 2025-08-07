@@ -53,6 +53,13 @@ home.packages = with pkgs; [
   qdirstat
   gparted
 
+
+    gnome-icon-theme
+  gnome-themes-extra
+  hicolor-icon-theme
+  adwaita-icon-theme
+  papirus-icon-theme
+
 ];
 
 programs.home-manager.enable = true;
@@ -64,4 +71,8 @@ programs.git = {
 };
 
 systemd.user.startServices = "sd-switch";
+
+
+
+
 }

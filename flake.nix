@@ -37,14 +37,15 @@
       url = "github:gmodena/nix-flatpak";   # track main branch
       inputs.nixpkgs.follows = "nixpkgs";   # reuse the same nixpkgs
     };
+
+    # goneovim.url = "path:./goneovim";
+
   };
 
   outputs = { self, ... } @ inputs: {
     nixosConfigurations = {
       z390ud = import ./host/z390ud {
         inherit inputs;
-
-
       };
 
     };
