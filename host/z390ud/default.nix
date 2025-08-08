@@ -17,6 +17,7 @@ nixpkgs.lib.nixosSystem {
 
     inputs.home-manager.nixosModules.home-manager
     {
+      home-manager.backupFileExtension = "backup";
 
       home-manager.users.jared = import ./home.nix;
       home-manager.extraSpecialArgs = { inherit inputs; };

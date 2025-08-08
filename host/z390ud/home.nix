@@ -3,27 +3,60 @@
 , config
 , pkgs
 , ...
-}: {
+}:
+let
+  # goneovimPkg = inputs.goneovim.packages.${pkgs.system}.goneovim;
+  in
+{
   home.stateVersion = "24.05";
 
   imports = [
     # nix-colors.homeManagerModules.default
     #
     inputs.nix-flatpak.homeManagerModules.nix-flatpak
+
     ../../base/home.nix
     ../../home-option/hyprland.nix
-    ../../home-option/emacs.nix
+    ../../home-option/emacs
+
   ];
 
 
 
 
   home.packages = with pkgs; [
+    # goneovimPkg
     prismlauncher
+    google-chrome
 
     jetbrains.webstorm
+
+    nerd-fonts.fira-code
+    nerd-fonts.noto
+    nerd-fonts.symbols-only
+
+
   ];
 
+
+  programs.bash = {
+    enable = true;
+
+  };
+
+
+  programs.direnv = {
+    enable = true;
+    nix-direnv.enable = true;
+    enableBashIntegration = true;
+    # TODO make quiet but not silent
+    silent = true;
+  };
+
+  home.keyboard = {
+    layout = "us";
+    options = [ "caps:escape" ];
+  };
 
 
 
@@ -86,5 +119,16 @@
   # Many modern GTK-4 apps look at this key first:
   dconf.settings."org/gnome/desktop/interface" = {
     color-scheme = "prefer-dark";
+  };
+
+
+  fonts = {
+    fontconfig.enable = true;
+  };
+
+
+
+  programs.nyxt = {
+    enable = true;
   };
 }

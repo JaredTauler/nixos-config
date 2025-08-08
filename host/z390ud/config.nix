@@ -25,6 +25,8 @@ in {
     ./vfio.nix
     ./vm.nix
     ./emacs.nix
+    ./lookingglass.nix
+    ./sccontroller.nix
 
     ../../option/openrazer.nix
     ../../option/printer/epson-et3750.nix
@@ -43,8 +45,7 @@ in {
 
 
   environment.systemPackages = with pkgs; [
-
-
+    cpuset
     davinci-resolve
   ];
 
@@ -55,10 +56,10 @@ in {
       PasswordAuthentication = true;
       AllowUsers =
         null; # Allows all users by default. Can be [ "user1" "user2" ]
-      UseDns = true;
-      X11Forwarding = false;
-      PermitRootLogin =
-        "prohibit-password"; # "yes", "without-password", "prohibit-password", "forced-commands-only", "no"
+        UseDns = true;
+        X11Forwarding = false;
+        PermitRootLogin =
+          "prohibit-password"; # "yes", "without-password", "prohibit-password", "forced-commands-only", "no"
     };
   };
 
@@ -66,17 +67,27 @@ in {
 
 
   # programs.evolution = {
-  #   enable = true; # pulls the wrapped binary
-  #   plugins = [ pkgs.evolution-ews ]; # Exchange Web-Services plug-in
-  # };
+    #   enable = true; # pulls the wrapped binary
+    #   plugins = [ pkgs.evolution-ews ]; # Exchange Web-Services plug-in
+    # };
 
-  # ## Session plumbing Evolution relies on
-  # services.gnome.gnome-keyring.enable = true;
-  # programs.dconf.enable = true;
+    # ## Session plumbing Evolution relies on
+    # services.gnome.gnome-keyring.enable = true;
+    # programs.dconf.enable = true;
 
-  hardware.bluetooth.enable = true; # enables support for Bluetooth
-  hardware.bluetooth.powerOnBoot =
-    true; # powers up the default Bluetooth controller on boot
-  #
-  services.blueman.enable = true;
+    hardware.bluetooth.enable = true; # enables support for Bluetooth
+    hardware.bluetooth.powerOnBoot =
+      true; # powers up the default Bluetooth controller on boot
+      #
+      services.blueman.enable = true;
+
+
+      systemd.targets = {
+        sleep.enable       = false;   # generic sleep target
+        suspend.enable     = false;   # S3 “Suspend”
+        hibernate.enable   = false;   # S4 “Hibernate”
+        hybridSleep.enable = false;   # Suspend‑then‑Hibernate
+      };
+
+
 }
