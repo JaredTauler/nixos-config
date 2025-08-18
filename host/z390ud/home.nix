@@ -31,32 +31,9 @@ let
 
     jetbrains.webstorm
 
-    nerd-fonts.fira-code
-    nerd-fonts.noto
-    nerd-fonts.symbols-only
-
 
   ];
 
-
-  programs.bash = {
-    enable = true;
-
-  };
-
-
-  programs.direnv = {
-    enable = true;
-    nix-direnv.enable = true;
-    enableBashIntegration = true;
-    # TODO make quiet but not silent
-    silent = true;
-  };
-
-  home.keyboard = {
-    layout = "us";
-    options = [ "caps:escape" ];
-  };
 
 
 
@@ -102,33 +79,10 @@ let
 
 
 
-  gtk = {
-    enable = true;
-
-    theme = {
-      name = "adw-gtk3-dark";     # string must match folder inside /share/themes
-      package = pkgs.adw-gtk3;
-    };
-
-    iconTheme = {
-      name = "Papirus-Dark";
-      package = pkgs.papirus-icon-theme;
-    };
-  };
-
-  # Many modern GTK-4 apps look at this key first:
-  dconf.settings."org/gnome/desktop/interface" = {
-    color-scheme = "prefer-dark";
-  };
-
-
-  fonts = {
-    fontconfig.enable = true;
-  };
 
 
 
-  programs.nyxt = {
-    enable = true;
-  };
+  # programs.nyxt = {
+  #   enable = true;
+  # };
 }
