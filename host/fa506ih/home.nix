@@ -1,15 +1,19 @@
 { inputs, config, lib, pkgs, ... }:
 
 {
-    home.stateVersion = "25.05";
+  home.stateVersion = "25.05";
 
   imports = [
     # nix-colors.homeManagerModules.default
     #
-	../../base/home.nix
+	  ../../base/home.nix
     inputs.nix-flatpak.homeManagerModules.nix-flatpak
-    ../../home-option/hyprland.nix
-    ../../home-option/emacs.nix
+    (import ../../home-option/hyprland.nix {
+      # FIXME absolute brainrot
+      sources = [ "~/nixos-config/host/fa506ih/hyprland.conf" ];
+    })
+    
+    ../../home-option/emacs
   ];
 
 

@@ -1,3 +1,5 @@
+{sources ? []}:
+
 { inputs
 , lib
 , config
@@ -174,7 +176,7 @@ in
 
         ];
 
-        source = "~/nixos-config/home-option/hyprland.conf";
+      source = sources ++ ["~/nixos-config/home-option/hyprland.conf"];
     };
   };
 

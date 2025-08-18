@@ -66,28 +66,13 @@ in {
   boot.supportedFilesystems = [ "ntfs" ];
 
 
-  # programs.evolution = {
-    #   enable = true; # pulls the wrapped binary
-    #   plugins = [ pkgs.evolution-ews ]; # Exchange Web-Services plug-in
-    # };
 
-    # ## Session plumbing Evolution relies on
-    # services.gnome.gnome-keyring.enable = true;
-    # programs.dconf.enable = true;
-
-    hardware.bluetooth.enable = true; # enables support for Bluetooth
-    hardware.bluetooth.powerOnBoot =
-      true; # powers up the default Bluetooth controller on boot
-      #
-      services.blueman.enable = true;
-
-
-      systemd.targets = {
-        sleep.enable       = false;   # generic sleep target
-        suspend.enable     = false;   # S3 “Suspend”
-        hibernate.enable   = false;   # S4 “Hibernate”
-        hybridSleep.enable = false;   # Suspend‑then‑Hibernate
-      };
+  systemd.targets = {
+    sleep.enable       = false;   # generic sleep target
+    suspend.enable     = false;   # S3 “Suspend”
+    hibernate.enable   = false;   # S4 “Hibernate”
+    hybridSleep.enable = false;   # Suspend‑then‑Hibernate
+  };
 
 
 }
