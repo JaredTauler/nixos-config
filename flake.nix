@@ -35,21 +35,60 @@
 
     nix-flatpak = {
       url = "github:gmodena/nix-flatpak";   # track main branch
-      inputs.nixpkgs.follows = "nixpkgs";   # reuse the same nixpkgs
     };
 
     # goneovim.url = "path:./goneovim";
 
+
+
+
+
+    hyprland.url = "github:hyprwm/Hyprland";
+
+    hyprsession.url = "github:joshurtree/hyprsession";
+
+    hyprland-virtual-desktops = {
+      url = "github:levnikmyskin/hyprland-virtual-desktops";
+      inputs.nixpkgs.follows = "hyprland";
+    };
   };
 
-  outputs = { self, ... } @ inputs: {
-    nixosConfigurations = {
-      z390ud = import ./host/z390ud {
+  outputs = { self, ... } @ inputs:
+  let
+    lib = inputs.nixpkgs.lib;
+    collect = import ./lib/collect.nix {inherit lib;};
+
+    hostFiles = builtins.attrNames (builtins.readDir ./host);
+
+    hostAttrs = map
+    (
+      folder:
+
+      let        
+      hostConfig = import (./host + "/${folder}") {
         inherit inputs;
       };
-	fa506ih = import ./host/fa506ih {
-		inherit inputs;
-	};
-    };
+      in
+      {
+        # Host definition
+        name = folder; # Named after folder name
+        value = hostConfig.nixpkgs.lib.nixosSystem {
+          system = hostConfig.system;
+          modules =
+            hostConfig.modules ++
+            (collect ./module) ++
+            (collect ./home-module); 
+            specialArgs = {
+              inherit inputs folder;
+            };
+        };
+      }
+    )
+    hostFiles;
+
+    hosts = builtins.listToAttrs hostAttrs;
+
+  in {
+    nixosConfigurations = hosts;
   };
 }

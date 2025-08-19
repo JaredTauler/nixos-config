@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SOCK="/tmp/hypr/${HYPRLAND_INSTANCE_SIGNATURE}/.socket2.sock"
+
+socat -u UNIX-CONNECT:"$SOCK" - | while read -r line; do
+  case "$line" in
+    openwindow* )
+      # if current focused window is fullscreen, turn it off
+      fs="$(hyprctl -j activewindow | jq -r '.fullscreen // 0')"
+      if [ "$fs" -ge 2 ]; then
+        hyprctl dispatch fullscreen 0
+      fi
+      ;;
+  esac
+done

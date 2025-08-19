@@ -97,7 +97,8 @@ in {
 
         # Nix
         nixd
-        nixfmt
+        nixfmt-rfc-style
+        # nixfmt
         statix
 
         # Webdev

@@ -23,7 +23,7 @@ in
     }
   ];
 
-  # libvirtd.service needs to be restarted for this to update
+  # FIXME libvirtd.service needs to be restarted for this to update
   # Took way too long to realize that.
   virtualisation.libvirtd.enable = true;
 
@@ -33,29 +33,29 @@ in
   # Kill anything using the GPU and Load VFIO drivers
   virtualisation.libvirtd.scopedHooks.qemu = {
 
-    # GPU drivers
-    "${name}-load_vfio" = {
-      script = null;
-      source = mkHook ../../load_vfio.sh;
-      scope = {
-        objects = [ name ];
-        # Before VM
-        operations = [ "prepare" ];
-        subOperations = [ "begin" ];
-      };
-    };
+    # # GPU drivers
+    # "${name}-load_vfio" = {
+    #   script = null;
+    #   source = mkHook ../../load_vfio.sh;
+    #   scope = {
+    #     objects = [ name ];
+    #     # Before VM
+    #     operations = [ "prepare" ];
+    #     subOperations = [ "begin" ];
+    #   };
+    # };
 
-    # Release GPU and load nvidia drivers
-    "${name}-load_nvidia" = {
-      script = null;
-      source = mkHook ../../load_nvidia.sh;
-      scope = {
-        objects = [ name ];
-        # VM has to be completely done
-        operations = [ "stopped" ];
-        subOperations = [ "end" ];
-      };
-    };
+    # # Release GPU and load nvidia drivers
+    # "${name}-load_nvidia" = {
+    #   script = null;
+    #   source = mkHook ../../load_nvidia.sh;
+    #   scope = {
+    #     objects = [ name ];
+    #     # VM has to be completely done
+    #     operations = [ "stopped" ];
+    #     subOperations = [ "end" ];
+    #   };
+    # };
 
     # Scream
     "${name}-load_scream" = {
@@ -81,23 +81,23 @@ in
 
 
     # Tuna
-    "${name}-tuna_start" = {
-      script = "tuna isolate --cputs=1-5,7-11";
-      scope = {
-        objects = [ name ];
-        operations = [ "prepare" ];
-        subOperations = [ "begin" ];
-      };
-    };
-    "${name}-tuna_stop" = {
-      script = "tuna include --cputs=1-5,7-11";
-      scope = {
-        objects = [ name ];
-        operations = [ "stopped" ];
-        subOperations = [ "end" ];
-      };
+    # "${name}-tuna_start" = {
+    #   script = "tuna isolate --cputs=1-5,7-11";
+    #   scope = {
+    #     objects = [ name ];
+    #     operations = [ "prepare" ];
+    #     subOperations = [ "begin" ];
+    #   };
+    # };
+    # "${name}-tuna_stop" = {
+    #   script = "tuna include --cputs=1-5,7-11";
+    #   scope = {
+    #     objects = [ name ];
+    #     operations = [ "stopped" ];
+    #     subOperations = [ "end" ];
+    #   };
 
-    };
+    # };
 
 
   };  

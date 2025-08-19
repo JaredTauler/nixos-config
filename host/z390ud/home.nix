@@ -21,7 +21,10 @@ let
 
   ];
 
-
+  # my.hyprland.sources = lib.mkAfter [
+  #   "~/nixos-config/host/fa506ih/hyprland.conf"
+  # ];
+  my.hyprland.enable = true;
 
 
   home.packages = with pkgs; [

@@ -13,19 +13,11 @@
   # The "nix hooks" did not work for the intel GPU specifically.
   # https://discourse.nixos.org/t/nvidia-gpu-and-i915-kernel-module/21307/3
 
+  # FIXME what
   boot.kernelParams = [
     "module_blacklist=i915"
 
-    "intel_iommu=on"
-    "iommu=pt"
-    "vfio-pci.ids=1002:665f"
   ];
-
-
-  boot.kernelModules = [ "kvm-intel" "vfio_virqfd" "vfio_pci" "vfio_iommu_type1" "vfio" ];
-
-  # Set which GPU(s) to use for VFIO
-  # boot.extraModprobeConfig = "options vfio-pci ids=1002:665f";
 
 
   fileSystems."/" =
@@ -51,8 +43,6 @@
   # networking.interfaces.enp5s0.useDHCP = lib.mkDefault true;
   # networking.interfaces.wlp3s0.useDHCP = lib.mkDefault true;
 
-
-  # services.xserver.videoDrivers = [ "amdgpu" ];
 
 
 

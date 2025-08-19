@@ -10,11 +10,11 @@ let
       count = 16;
       unit = "GiB";
     };
-    storage_vol = {
-      pool = "default";
-      volume = "win11.qcow2";
-    };
-    install_vol = "/var/lib/libvirt/images/Win11.iso";
+    # storage_vol = {
+    #   pool = "default";
+    #   volume = "win11.qcow2";
+    # };
+    # install_vol = "/var/lib/libvirt/images/Win11.iso";
 
     # Fuck with this file to disable/enable secure boot
     nvram_path = "/var/lib/libvirt/qemu/nvram/win11_VARS.fd";
@@ -109,8 +109,21 @@ let
       topology     = { sockets = 1; dies = 1; cores = 5; threads = 2; };
       cacheMode    = "passthrough";
     };
-
+    iothreads = { count = 2; };
     cputune = {
+
+      iothreadpin = [
+        {
+          iothread=1;
+          cpuset = "0";
+        }
+        {
+          iothread=2;
+          cpuset = "1-4,^3";
+        }
+
+      ];
+
       vcpupin = [
         { vcpu = 0; cpuset = "1";  }
         { vcpu = 1; cpuset = "7";  }
@@ -136,128 +149,154 @@ let
           present = true;
           mode = "native";
         }
+        { name = "hpet"; present = false; }
       ];
     };
 
-    features = base.features // {
-      hyperv = base.features.hyperv // {
-        mode = "passthrough"; # Helps hide VM + hyperv enlightenments
+
+
+    features =
+      let
+        on = {state = true;};
+        off = {state = false;};
+      in
+      base.features // {
+        # hyperv = base.features.hyperv // {
+          #   mode = "passthrough"; # Helps hide VM + hyperv enlightenments
+          # };
+          hyperv = {
+            relaxed = on;
+            vapic   = on;
+            spinlocks = on // { retries = 8191; };
+            vpindex = on;
+            synic   = on;
+            stimer  = on;
+          };
+          kvm.hidden.state = true; # 🤫
       };
 
-      kvm.hidden.state = true; # 🤫
-    };
+      # Merge
+      devices = base.devices // {
+        disk = base.devices.disk ++ [
+          {
+            driver = { name = "qemu"; type = "qcow2"; iothread = 1;};
+            source = { file = "/var/lib/libvirt/images/win11.qcow2"; };
+            target = { dev = "vda"; bus = "virtio"; };
 
-    # Merge
-    devices = base.devices // {
-      disk = base.devices.disk ++ [
-      {
-        driver = { name = "qemu"; type = "qcow2"; };
-        source = { file = "/var/lib/libvirt/images/steamlibrary.qcow2"; };
-        target = { dev = "vdb"; bus = "virtio"; };
-      }
-    ];
+          }
 
-      
-      # FIXME why does opengl acceleration not work on AMD card
-
-
-      # looking glass guide says memballoon causes problems with VFIO
-      memballoon = {
-        model="none";
-      };
+          {
+            driver = { name = "qemu"; type = "qcow2"; iothread=2; };
+            source = { file = "/var/lib/libvirt/images/steamlibrary.qcow2"; };
+            target = { dev = "vdb"; bus = "virtio"; };
+          }
+        ];
 
 
-      # For looking glass
-      graphics = base.devices.graphics // {
-        type = "spice";
+        # FIXME why does opengl acceleration not work on AMD card
 
-        # FIXME why cant these port options be set :( still works ok without but port needs to be 5900
-        # autoport = false;
-        # port = 5900;
-        listen = {
-          type = "address";
-          address = "127.0.0.1";
+
+        # looking glass guide says memballoon causes problems with VFIO
+        memballoon = {
+          model="none";
         };
-        gl = {
-          enable = false;
+
+
+        # For looking glass
+        graphics = base.devices.graphics // {
+          type = "spice";
+
+          # FIXME why cant these port options be set :( still works ok without but port needs to be 5900
+          # autoport = false;
+          # port = 5900;
+          listen = {
+            type = "address";
+            address = "127.0.0.1";
+          };
+          gl = {
+            enable = false;
+          };
         };
-      };
 
-      video = base.devices.video // {
-        model = base.devices.video.model // {
-          acceleration = { accel3d = false; };
-        };
-      };      
+        video = base.devices.video // {
+          # model = base.devices.video.model // {
+          #   acceleration = { accel3d = false; };
+          # };
+          model = {
+            type = "none";
+          };
+        };      
 
 
-      hostdev = [
-        # RTX 2070
-        # TODO dynamically pass this in
-        {
-          mode = "subsystem";
-          type = "pci";
+        hostdev = [
+          # RTX 2070
+          # TODO dynamically pass this in
+          {
+            mode = "subsystem";
+            type = "pci";
 
-          managed = true;
-          source = {
+            managed = true;
+            source = {
+              address = {
+                domain = 0;
+                bus = 1;
+                slot = 0;
+                function = 0;
+              };
+            };
+
             address = {
+              type = "pci";
               domain = 0;
-              bus = 1;
+              bus = 6;
               slot = 0;
               function = 0;
+              multifunction = true;
             };
-          };
 
-          address = {
+          }
+          {
+            mode = "subsystem";
             type = "pci";
-            domain = 0;
-            bus = 6;
-            slot = 0;
-            function = 0;
-          };
 
-        }
-        {
-          mode = "subsystem";
-          type = "pci";
+            managed = true;
+            source = {
+              address = {
+                domain = 0;
+                bus = 1;
+                slot = 0;
+                function = 1;
+              };
+            };
 
-          managed = true;
-          source = {
             address = {
+              type = "pci";
               domain = 0;
-              bus = 1;
+              bus = 6;
               slot = 0;
               function = 1;
             };
-          };
 
-          address = {
-            type = "pci";
-            domain = 0;
-            bus = 7;
-            slot = 0;
-            function = 0;
-          };
-
-        }
+          }
 
 
-      ];
-    };
+        ];
+      };
 
-    # For looking glass
-    # TODO magically apply all this bull shit with a function that eats domains
-    #
+      # For looking glass
+      # TODO magically apply all this bull shit with a function that eats domains
+      #
 
-    qemu-commandline = {
-      arg = [
-        { value = "-device"; }
-        { value = "{'driver':'ivshmem-plain','id':'shmem0','memdev':'looking-glass'}"; }
+      qemu-commandline = {
+        arg = [
+          { value = "-device"; }
+          { value = "{'driver':'ivshmem-plain','id':'shmem0','memdev':'looking-glass'}"; }
 
-        { value = "-object"; }
-        { value = "{'qom-type':'memory-backend-file','id':'looking-glass','mem-path':'/dev/kvmfr0','size':${toString (ivshmem-size*1024*1024)},'share':true}"; }
+          { value = "-object"; }
+          { value = "{'qom-type':'memory-backend-file','id':'looking-glass','mem-path':'/dev/kvmfr0','size':${toString (ivshmem-size*1024*1024)},'share':true}"; }
 
-      ];
-    };
+        ];
+      };
   };
 in
 NixVirt.lib.domain.writeXML domain

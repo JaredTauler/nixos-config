@@ -1,0 +1,14 @@
+{ lib, ... }:
+
+let
+  collect = path:
+  lib.flatten (lib.mapAttrsToList (name: type:
+  if type == "regular" && lib.hasSuffix ".nix" name then
+  [ (import (path + "/${name}")) ]
+  else if type == "directory" then
+  [ (collect (path + "/${name}")) ]
+  else
+  []
+  ) (builtins.readDir path));
+in
+collect ./.

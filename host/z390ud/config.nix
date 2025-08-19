@@ -26,7 +26,6 @@ in {
     ./vm.nix
     ./emacs.nix
     ./lookingglass.nix
-    ./sccontroller.nix
 
     ../../option/openrazer.nix
     ../../option/printer/epson-et3750.nix
@@ -37,10 +36,13 @@ in {
 
 
   ];
+
+
+    vfio.enable = true;
   services.xserver.enable = true;
 
-  services.xserver.displayManager.gdm.enable = true;
-  services.xserver.desktopManager.gnome.enable = true;
+  services.displayManager.gdm.enable = true;
+  services.desktopManager.gnome.enable = true;
 
 
 

@@ -1,0 +1,16 @@
+# Colors
+HOVER="rgba(ffff88ff) rgba(ff8888ff) 90deg"
+NORMAL="rgba(88ff88ff) rgba(8888ffff) 45deg"
+
+# Monitor events
+hyprctl -j monitors | jq . > /dev/null  # ensures hyprctl is running
+socat -u UNIX-CONNECT:/tmp/hypr/$HYPRLAND_INSTANCE_SIGNATURE/.socket2.sock - | while read -r line; do
+    case "$line" in
+        *"mouseOnWindow"*)
+            hyprctl keyword decoration:active_border_color "$HOVER"
+            ;;
+        *"mouseLeaveWindow"*)
+            hyprctl keyword decoration:active_border_color "$NORMAL"
+            ;;
+    esac
+done

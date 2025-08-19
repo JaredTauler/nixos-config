@@ -8,15 +8,14 @@
     #
 	  ../../base/home.nix
     inputs.nix-flatpak.homeManagerModules.nix-flatpak
-    (import ../../home-option/hyprland.nix {
-      # FIXME absolute brainrot
-      sources = [ "~/nixos-config/host/fa506ih/hyprland.conf" ];
-    })
-    
+    ../../home-option/hyprland.nix 
+
     ../../home-option/emacs
   ];
 
-
+  my.hyprland.sources = lib.mkAfter [
+    "~/nixos-config/host/fa506ih/hyprland.conf"
+  ];
 
 
   home.packages = with pkgs; [
