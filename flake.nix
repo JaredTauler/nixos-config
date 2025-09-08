@@ -22,10 +22,6 @@
       url = "https://flakehub.com/f/AshleyYakeley/NixVirt/*.tar.gz";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    hyprshell = {
-      url = "github:H3rmt/hyprswitch?ref=hyprshell";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
 
     rust-overlay = {
       url = "github:oxalica/rust-overlay";
@@ -37,7 +33,6 @@
       url = "github:gmodena/nix-flatpak";   # track main branch
     };
 
-    # goneovim.url = "path:./goneovim";
 
 
 
@@ -49,38 +44,74 @@
 
     hyprland-virtual-desktops = {
       url = "github:levnikmyskin/hyprland-virtual-desktops";
-      inputs.nixpkgs.follows = "hyprland";
+      # inputs.nixpkgs.follows = "hyprland"; # follows hyprland
     };
+
+    hyprshell = {
+      url = "github:H3rmt/hyprswitch?ref=hyprshell";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
   };
 
-  outputs = { self, ... } @ inputs:
+
+
+
+  outputs = { self, ... } @ inputs:    
   let
-    lib = inputs.nixpkgs.lib;
-    collect = import ./lib/collect.nix {inherit lib;};
+    # overlays = [
+    #   (final: prev: {
+    #     hyprland  = inputs.hyprland.packages.${final.system}.hyprland;
+    #     hyprshell = final.callPackage "${inputs.hyprshell}/." { };
+    #   })
+    #   inputs.rust-overlay.overlays.default
+   # ];
+    
+
+    collect = import ./lib/collect.nix {lib = inputs.nixpkgs.lib;};
+
 
     hostFiles = builtins.attrNames (builtins.readDir ./host);
 
     hostAttrs = map
     (
-      folder:
+      fname:
 
       let        
-      hostConfig = import (./host + "/${folder}") {
-        inherit inputs;
+      hostConfig = import (./host + "/${fname}") {
+        inherit inputs ;
       };
       in
       {
         # Host definition
-        name = folder; # Named after folder name
+        name = fname; # Named after folder name
+
+        # Actually set nixosSystem, meaning host/$hostname/default.nix should be a module
         value = hostConfig.nixpkgs.lib.nixosSystem {
-          system = hostConfig.system;
+          inherit (hostConfig) system pkgs;
+          # system = hostConfig.system;
           modules =
             hostConfig.modules ++
-            (collect ./module) ++
-            (collect ./home-module); 
+            (collect {
+              path = ./module;
+              handle = file: import file;
+            }) ++
+            # FIXME yucky
+            # Should probably just tack modules in each host
+            [
+              {
+                home-manager.users.jared.imports = collect {
+                  path = ./home-module;
+                  handle = file: import file;
+                };
+              }
+            ];
+
             specialArgs = {
-              inherit inputs folder;
+              inherit inputs fname ;
+              host = fname; 
             };
+
         };
       }
     )

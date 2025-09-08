@@ -6,7 +6,7 @@
 }:
 let
   # goneovimPkg = inputs.goneovim.packages.${pkgs.system}.goneovim;
-  in
+in
 {
   home.stateVersion = "24.05";
 
@@ -16,62 +16,58 @@ let
     inputs.nix-flatpak.homeManagerModules.nix-flatpak
 
     ../../base/home.nix
-    ../../home-option/hyprland.nix
     ../../home-option/emacs
 
   ];
 
   # my.hyprland.sources = lib.mkAfter [
-  #   "~/nixos-config/host/fa506ih/hyprland.conf"
-  # ];
-  my.hyprland.enable = true;
+    #   "~/nixos-config/host/fa506ih/hyprland.conf"
+    # ];
+    my.hyprland.enable = true;
 
 
-  home.packages = with pkgs; [
-    # goneovimPkg
-    prismlauncher
-    google-chrome
+    home.packages = with pkgs; [
+      # goneovimPkg
+      prismlauncher
+      google-chrome
 
-    jetbrains.webstorm
+      jetbrains.webstorm
 
+      # discord-canary
 
-  ];
-
-
-
-
-  # 2 ) turn Flatpak on for this user
-  services.flatpak = {
-    enable = true;
-
-    # 3 ) declare the apps you want
-    packages = [
-      "org.vinegarhq.Sober"     # Roblox client
-      # "com.discordapp.Discord"
-      # "org.mozilla.Thunderbird"
     ];
+    # 2 ) turn Flatpak on for this user
+    services.flatpak = {
+      enable = true;
 
-    # optional: keep them fresh without manual `flatpak update`
-    update = {
-      onActivation = true;      # update every `home-manager switch`
-      auto.enable  = true;      # plus a weekly timer
-    };
-  };
+      # 3 ) declare the apps you want
+      packages = [
+        "org.vinegarhq.Sober"     # Roblox client
+        "com.discordapp.Discord"
+        # "org.mozilla.Thunderbird"
+      ];
 
-  services.flatpak.overrides."org.vinegarhq.Sober" = {
-    # 1) Disable Wayland, enable X11
-    # Context = {
-      #   wayland = false;
-      #   x11     = true;
-      # };
-
-      # 2) Environment tweaks
-      Environment = {
-        SOBER_RENDERER   = "opengl";
-        FLATPAK_MAX_MEMORY = "4G";          # raise if you still see OOM crashes
-        LC_ALL            = "en_US.UTF-8";  # avoids random locale-related exits
+      # optional: keep them fresh without manual `flatpak update`
+      update = {
+        onActivation = true;      # update every `home-manager switch`
+        auto.enable  = true;      # plus a weekly timer
       };
-  };
+    };
+
+    services.flatpak.overrides."org.vinegarhq.Sober" = {
+      # 1) Disable Wayland, enable X11
+      # Context = {
+        #   wayland = false;
+        #   x11     = true;
+        # };
+
+        # 2) Environment tweaks
+        Environment = {
+          SOBER_RENDERER   = "opengl";
+          FLATPAK_MAX_MEMORY = "4G";          # raise if you still see OOM crashes
+          LC_ALL            = "en_US.UTF-8";  # avoids random locale-related exits
+        };
+    };
 
 
 
@@ -85,7 +81,7 @@ let
 
 
 
-  # programs.nyxt = {
-  #   enable = true;
-  # };
+    # programs.nyxt = {
+      #   enable = true;
+      # };
 }

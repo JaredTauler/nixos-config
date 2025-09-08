@@ -68,24 +68,24 @@
             kernelParams = [
               "intel_iommu=on" "iommu=pt"
               "pcie_aspm=off"
-
-            ] ++ lib.optional cfg.enable
-            # isolate the GPU
-            ("vfio-pci.ids=" + lib.concatStringsSep "," gpuIDs);
-            blacklistedKernelModules = [
-              "nouveau"
-              "nvidia" "nvidia_drm" "nvidia_modeset" "nvidia_uvm" "nvidiafb"
-              # NOTE: do NOT blacklist snd_hda_intel globally;
-              # vfio will already claim 10de:10f8 before it can.
             ];
+            # ] ++ lib.optional cfg.enable
+            # # isolate the GPU
+            # ("vfio-pci.ids=" + lib.concatStringsSep "," gpuIDs);
+            # blacklistedKernelModules = [
+            #   "nouveau"
+            #   "nvidia" "nvidia_drm" "nvidia_modeset" "nvidia_uvm" "nvidiafb"
+            #   # NOTE: do NOT blacklist snd_hda_intel globally;
+            #   # vfio will already claim 10de:10f8 before it can.
+            # ];
 
-            initrd.preDeviceCommands = ''
-              for dev in 0000:01:00.0 0000:01:00.1 0000:01:00.2 0000:01:00.3; do
-              if [ -e /sys/bus/pci/devices/$dev/driver_override ]; then
-              echo vfio-pci > /sys/bus/pci/devices/$dev/driver_override
-              fi
-              done
-            '';
+            # initrd.preDeviceCommands = ''
+            #   for dev in 0000:01:00.0 0000:01:00.1 0000:01:00.2 0000:01:00.3; do
+            #   if [ -e /sys/bus/pci/devices/$dev/driver_override ]; then
+            #   echo vfio-pci > /sys/bus/pci/devices/$dev/driver_override
+            #   fi
+            #   done
+            # '';
 
             # initrd.postDeviceCommands = lib.mkIf cfg.enable ''
             #   for fn in 0000:01:00.0 0000:01:00.1 0000:01:00.2 0000:01:00.3; do

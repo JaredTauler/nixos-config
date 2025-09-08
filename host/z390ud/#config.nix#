@@ -11,6 +11,7 @@ in {
   boot.loader.efi.canTouchEfiVariables = true;
   networking.networkmanager.enable = true;
 
+  nixpkgs.config.allowUnfree = true;
 
   swapDevices = [{
     device = "/swapfile";

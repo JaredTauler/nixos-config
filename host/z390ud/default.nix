@@ -1,12 +1,21 @@
-{ inputs}:
+{ inputs, }:
 
 {
   nixpkgs = inputs."nixpkgs-unstable";
-  host = "z390ud";
 
-  # specialArgs = {
-  #   inherit inputs host;
+  # pkgs = import inputs.nixpkgs-unstable {
+  #   system   = "x86_64-linux";
+  #   inherit overlays;
+  #   config = {
+  #     allowUnfree = true;
+  #   };
   # };
+  system = "x86_64-linux";
+  pkgs = import inputs.nixpkgs-unstable {
+    system = "x86_64-linux";
+    config.allowUnfree = true;
+  };
+
   modules = [
     ../../base/config.nix
     ./config.nix

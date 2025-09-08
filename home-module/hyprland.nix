@@ -16,7 +16,8 @@ in
     sources = mkOption {
       type = types.listOf types.string;
       default = [
-        "/home/jared/nixos-config/home-option/hyprland.conf"
+	      # TODO
+        "/home/jared/nixos-config/home-module/hyprland.conf"
       ];
       description = "Extra Hyprland config fragments";
     };
@@ -51,6 +52,54 @@ in
         };
 
     in {
+      wayland.windowManager.hyprland = {
+
+        enable = true;
+        systemd.enable = false;
+        plugins = with pkgs.hyprlandPlugins; [
+          hyprsplit
+          hyprspace
+          borders-plus-plus          
+        ];
+
+        settings = {
+          "$mod" = "SUPER";
+          bind =
+            [
+
+              # "$mod, F, exec, firefox"
+              # ", Print, exec, grimblast copy area"
+              # "bind = SUPER, 1, split:workspace, 1"
+              #
+
+            ];
+
+
+            source = (
+              config.my.hyprland.sources
+            );
+
+        };
+      };
+
+
+      xdg.portal = {
+        enable = true;
+        # hyprland is the backend you want in charge
+        extraPortals = [
+          pkgs.xdg-desktop-portal-gtk  # for file pickers
+          pkgs.xdg-desktop-portal-hyprland
+        ];
+        config = {
+          common = {
+            default = "hyprland";
+          };
+        };
+      };
+
+
+
+
       # nixpkgs.overlays = [ inputs.rust-overlay.overlays.default ];
 
       # https://github.com/vfosnar/nix-colors-adapters
@@ -76,6 +125,14 @@ in
 
 
       home.packages = with pkgs; [
+
+        xdg-desktop-portal
+        xdg-desktop-portal-gtk
+        xdg-desktop-portal-hyprland
+
+
+
+
         inputs.hyprsession.packages.${pkgs.system}.hyprsession
 
         grim # For flameshot
@@ -175,37 +232,6 @@ in
         '';
       };
 
-      wayland.windowManager.hyprland = {
-        enable = true;
-        systemd.enable = false;
-        plugins = with pkgs.hyprlandPlugins; [
-          hyprsplit
-          hyprspace
-          borders-plus-plus          
-          # hyprfocus
-        # ] ++ [
-        #   inputs.hyprland-virtual-desktops.packages.${pkgs.system}.virtual-desktops
-        ];
-
-        settings = {
-          "$mod" = "SUPER";
-          bind =
-            [
-
-              # "$mod, F, exec, firefox"
-              # ", Print, exec, grimblast copy area"
-              # "bind = SUPER, 1, split:workspace, 1"
-              #
-
-            ];
-
-
-            source = (
-              config.my.hyprland.sources
-            );
-
-        };
-      };
 
 
       # https://mynixos.com/home-manager/options/programs.waybar

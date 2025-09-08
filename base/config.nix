@@ -7,7 +7,6 @@
 
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
-  nixpkgs.config.allowUnfree = true; # FIXME why doesnt this work here
 
 
 

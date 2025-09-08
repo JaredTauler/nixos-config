@@ -11,11 +11,11 @@ PCI_DEVICES=(
 )
 
 VFIO_IDS=(
-  "10de 1f07"  # GPU
-  "10de 10f9"  # Audio
+  "10de 1e89"  # GPU
+  "10de 10f8"  # Audio
 
-  "10de 1ada"  # USB 3.1
-  "10de 1adb"  # UCSI
+  "10de 1ad8"  # USB 3.1
+  "10de 1ad9"  # UCSI
 )
 
 echo "[*] Unbinding devices from current driver (vfio-pci or otherwise)…"
@@ -51,3 +51,6 @@ done
 
 echo "[✓] Done.  Current status:"
 # nvidia-smi || echo "(!) nvidia-smi failed — check dmesg for details"
+
+modprobe -r vfio-pci
+modprobe nvidia_drm modeset=1
