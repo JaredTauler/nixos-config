@@ -22,10 +22,6 @@
       url = "https://flakehub.com/f/AshleyYakeley/NixVirt/*.tar.gz";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    hyprshell = {
-      url = "github:H3rmt/hyprswitch?ref=hyprshell";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
 
     rust-overlay = {
       url = "github:oxalica/rust-overlay";
@@ -37,7 +33,6 @@
       url = "github:gmodena/nix-flatpak";   # track main branch
     };
 
-    # goneovim.url = "path:./goneovim";
 
 
 
@@ -49,44 +44,64 @@
 
     hyprland-virtual-desktops = {
       url = "github:levnikmyskin/hyprland-virtual-desktops";
-      inputs.nixpkgs.follows = "hyprland";
+      inputs.nixpkgs.follows = "hyprland"; # follows hyprland
     };
+
+    hyprshell = {
+      url = "github:H3rmt/hyprswitch?ref=hyprshell";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
   };
 
-  outputs = { self, ... } @ inputs:
-  let
-    lib = inputs.nixpkgs.lib;
-    collect = import ./lib/collect.nix {inherit lib;};
 
-    hostFiles = builtins.attrNames (builtins.readDir ./host);
 
-    hostAttrs = map
-    (
-      folder:
 
-      let        
-      hostConfig = import (./host + "/${folder}") {
-        inherit inputs;
+  outputs = { self, ... } @ inputs:    
+  let 
+  lib = inputs.nixpkgs.lib;
+  collect = import ./lib/collect.nix {inherit lib;};
+
+  overlays = collect ./overlay;
+
+  hostFiles = builtins.attrNames (builtins.readDir ./host);
+
+  hostAttrs = map
+  (
+    fname:
+
+    let        
+    hostConfig = import (./host + "/${fname}") {
+      inherit inputs overlays;
+    };
+    in
+    {
+      # Host definition
+      name = fname; # Named after folder name
+
+      # Actually set nixosSystem, meaning host/$hostname/default.nix should be a module
+      value = hostConfig.nixpkgs.lib.nixosSystem {
+        system = hostConfig.system;
+        modules =
+          hostConfig.modules ++
+          (collect ./module) ++
+          # FIXME yucky
+          # Should probably just tack modules in each host
+          [
+            { home-manager.users.jared.imports = collect ./home-module; }
+          ];
+
+          specialArgs = {
+            inherit inputs fname ;
+            host = fname; 
+          };
+
       };
-      in
-      {
-        # Host definition
-        name = folder; # Named after folder name
-        value = hostConfig.nixpkgs.lib.nixosSystem {
-          system = hostConfig.system;
-          modules =
-            hostConfig.modules ++
-            (collect ./module) ++
-            (collect ./home-module); 
-            specialArgs = {
-              inherit inputs folder;
-            };
-        };
-      }
-    )
-    hostFiles;
+    }
+  )
+  hostFiles;
 
-    hosts = builtins.listToAttrs hostAttrs;
+  hosts = builtins.listToAttrs hostAttrs;
 
   in {
     nixosConfigurations = hosts;

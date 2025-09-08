@@ -16,7 +16,6 @@ let
     inputs.nix-flatpak.homeManagerModules.nix-flatpak
 
     ../../base/home.nix
-    ../../home-option/hyprland.nix
     ../../home-option/emacs
 
   ];

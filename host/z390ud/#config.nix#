@@ -33,12 +33,12 @@ in {
 
 
   ];
-  
+
 
   my.hyprland.enable = true;
   vfio.enable = true;
 
-  
+
   services.xserver.enable = true;
 
   services.displayManager.gdm.enable = true;

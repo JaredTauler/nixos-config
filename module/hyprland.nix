@@ -1,10 +1,10 @@
 { lib, config, pkgs, inputs, ... }:
 
 let
-  cfg = config.my.desktop.hyprland;
+  cfg = config.my.hyprland;
 in
 {
-  options.my.desktop.hyprland.enable =
+  options.my.hyprland.enable =
     lib.mkEnableOption "Enable Hyprland system-side integration";
 
     config = lib.mkIf cfg.enable {  
