@@ -138,62 +138,37 @@
               (display-buffer outputbuf)
               (error "Alejandra failed; see *Alejandra Errors*"))))
       (delete-file tmpfile))))
-;; nix
-;; Hook
-;; (add-hook 'nix-mode-hook
-;; 	  (lambda ()
-;; 	    (lsp)
-;; 	    (flycheck-mode 1)
-;; 	    (when (fboundp 'tree-sitter-mode)
-;; 	      (tree-sitter-mode)
-;; 	      (tree-sitter-hl-mode))
-
-;; 	    ;; nix-formt-buffer is shitty
-;; 	    ;; (setq-local format-buffer-function 'nix-mode-format)
-;; 	    (setq-local format-buffer-function #'alejandra-format-buffer)
-
-;; 	    )
-;; 	  )
 
 (require 'polymode)
-
-(defun my-nix-hook ()
-  (lsp-deferred)
-  (flycheck-mode 1)
-  (setq-local format-buffer-function #'alejandra-format-buffer))
-(add-hook 'poly-nix-mode-hook #'my-nix-hook)
-
-;; must end with hostmode, then innermode:
-(define-hostmode poly-nix-hostmode :mode 'nix-mode)
-(define-innermode poly-nix-bash-innermode
-  :mode 'sh-mode
-  :head-matcher "''[ \t]*\n"
-  :tail-matcher "^[ \t]*''"
-  :head-mode 'host :tail-mode 'host)
-
-
-
-(require 'nix-mode)
-(add-to-list 'auto-mode-alist '("\\.nix\\'" . nix-mode))
-
 (require 'lsp-mode)
-
-;; Use nixd as the LSP server
-(setq lsp-nix-server 'nixd)
-
-;; format buffer function
-(defvar-local format-buffer-function nil
-  "Function to format the current buffer. Should be buffer-local.")
+(require 'cl-lib)
 
 
-(define-polymode poly-nix-mode
-  :hostmode 'poly-nix-hostmode
-  :innermodes '(poly-nix-bash-innermode))
 
-;; ensure .nix uses poly, not plain nix-mode
-(setq auto-mode-alist
-      (cons '("\\.nix\\'" . poly-nix-mode)
-            (rassq-delete-all 'nix-mode auto-mode-alist)))
+
+;; Nix
+(require 'nix-mode)
+
+(add-hook 'nix-mode-hook
+	  (lambda ()
+	    (lsp)
+	    (flycheck-mode 1)
+	    (when (fboundp 'tree-sitter-mode)
+	      (tree-sitter-mode)
+	      (tree-sitter-hl-mode))
+
+	    ;; nix-formt-buffer is shitty
+	    ;; (setq-local format-buffer-function 'nix-mode-format)
+	    (setq-local format-buffer-function #'alejandra-format-buffer)
+
+	    )
+	  )
+
+
+
+
+
+
 
 
 ;; general format buffer function

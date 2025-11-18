@@ -4,9 +4,12 @@
   nixpkgs = inputs."nixpkgs-unstable";
 
   system = "x86_64-linux";
+
   pkgs = import inputs.nixpkgs-unstable {
     system = "x86_64-linux";
     config.allowUnfree = true;
+    config.nvidia.acceptLicense = true;
+
   };
 
   modules = [

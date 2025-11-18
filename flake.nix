@@ -9,8 +9,8 @@
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
 
-    nixarr.url              = "github:rasmus-kirk/nixarr";
-    nix-colors.url          = "github:misterio77/nix-colors";
+    nixarr.url = "github:rasmus-kirk/nixarr";
+    nix-colors.url = "github:misterio77/nix-colors";
     nix-colors-adapters.url = "gitlab:vfosnar/nix-colors-adapters";
 
     winapps = {
@@ -25,18 +25,12 @@
 
     rust-overlay = {
       url = "github:oxalica/rust-overlay";
-      inputs.nixpkgs.follows = "nixpkgs-unstable";  # or "nixpkgs"
+      inputs.nixpkgs.follows = "nixpkgs-unstable"; # or "nixpkgs"
     };
-
 
     nix-flatpak = {
-      url = "github:gmodena/nix-flatpak";   # track main branch
+      url = "github:gmodena/nix-flatpak"; # track main branch
     };
-
-
-
-
-
 
     hyprland.url = "github:hyprwm/Hyprland";
 
@@ -51,74 +45,68 @@
       url = "github:H3rmt/hyprswitch?ref=hyprshell";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
-
   };
 
-
-
-
-  outputs = { self, ... } @ inputs:    
-  let
+  outputs = {self, ...} @ inputs: let
     # overlays = [
     #   (final: prev: {
     #     hyprland  = inputs.hyprland.packages.${final.system}.hyprland;
     #     hyprshell = final.callPackage "${inputs.hyprshell}/." { };
     #   })
     #   inputs.rust-overlay.overlays.default
-   # ];
-    
-
+    # ];
     collect = import ./lib/collect.nix {lib = inputs.nixpkgs.lib;};
-
 
     hostFiles = builtins.attrNames (builtins.readDir ./host);
 
-    hostAttrs = map
-    (
-      fname:
+    hostAttrs =
+      map
+      (
+        fname: let
+          hostConfig = import (./host + "/${fname}") {
+            inherit inputs;
+          };
+        in {
+          # Host definition
+          name = fname; # Named after folder name
 
-      let        
-      hostConfig = import (./host + "/${fname}") {
-        inherit inputs ;
-      };
-      in
-      {
-        # Host definition
-        name = fname; # Named after folder name
-
-        # Actually set nixosSystem, meaning host/$hostname/default.nix should be a module
-        value = hostConfig.nixpkgs.lib.nixosSystem {
-          inherit (hostConfig) system pkgs;
-          # system = hostConfig.system;
-          modules =
-            hostConfig.modules ++
-            (collect {
-              path = ./module;
-              handle = file: import file;
-            }) ++
-            # FIXME yucky
-            # Should probably just tack modules in each host
-            [
-              {
-                home-manager.users.jared.imports = collect {
-                  path = ./home-module;
-                  handle = file: import file;
-                };
-              }
-            ];
+          # Actually set nixosSystem, meaning host/$hostname/default.nix should be a module
+          value = hostConfig.nixpkgs.lib.nixosSystem {
+            inherit (hostConfig) system pkgs;
+            # system = hostConfig.system;
+            modules =
+              hostConfig.modules
+              ++ (collect {
+                path = ./module;
+                handle = file: import file;
+              })
+              ++
+              # FIXME yucky
+              # Should probably just tack modules in each host
+              [
+                {
+                  # Fix nixd 
+                  nix.nixPath = [
+                    "nixpkgs=${inputs.nixpkgs}"
+                  ];
+                  
+                  home-manager.users.jared.imports = collect {
+                    path = ./home-module;
+                    handle = file: import file;
+                  };
+                }
+              ];
 
             specialArgs = {
-              inherit inputs fname ;
-              host = fname; 
+              inherit inputs fname;
+              host = fname;
             };
-
-        };
-      }
-    )
-    hostFiles;
+          };
+        }
+      )
+      hostFiles;
 
     hosts = builtins.listToAttrs hostAttrs;
-
   in {
     nixosConfigurations = hosts;
   };

@@ -5,48 +5,7 @@
 , ...
 }:
 let
-  # goneovimPkg = inputs.goneovim.packages.${pkgs.system}.goneovim;
-
-
-  # FIXME make monitors stuff share-able 
-  # monitors = [
-  #   {
-  #     name = "DVI-D-1";
-  #     res = "1920x1080";
-  #     pos = "1600x-1080";
-  #     scale = 1;
-  #     extras = [ "transform,2" ];
-  #   }
-  #   {
-  #     name = "HDMI-A-2";
-  #     res = "2560x1440";
-  #     pos = "0x0";
-  #     scale = 1;
-  #     extras = [ ];
-  #   }
-  #   {
-  #     name = "HDMI-A-1";
-  #     res = "2560x1440@144";
-  #     pos = "2560x0";
-  #     scale = 1;
-  #     extras = [ "bitdepth,10" "vrr,1" "cm,hdr" ];
-  #   }
-  # ];
-  # mkMonitorLine = m:
-  # let
-  #   parts = [
-  #     m.name
-  #     m.res
-  #     m.pos
-  #     (toString m.scale)
-  #   ] ++ m.extras;
-  # in
-  #   "monitor = ${lib.concatStringsSep "," parts}";
-
   
-
-  # monitorsFile = pkgs.writeText "hyprland-monitors.conf"
-  #   (lib.concatStringsSep "\n" (map mkMonitorLine monitors));
 in
 {
   home.stateVersion = "24.05";
@@ -57,15 +16,16 @@ in
     inputs.nix-flatpak.homeManagerModules.nix-flatpak
 
     ../../base/home.nix
-    ../../home-option/emacs
-
 
 
   ];
 
   # my.hyprland.sources = lib.mkAfter [
     #   "~/nixos-config/host/fa506ih/hyprland.conf"
-    # ];
+  # ];
+
+    my.emacs.enable = true;
+
     my.hyprland.enable = true;
     my.hyprland.sources = [
       "/home/jared/nixos-config/host/z390ud/hyprland.conf"

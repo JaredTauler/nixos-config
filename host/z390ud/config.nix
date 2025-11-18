@@ -21,9 +21,9 @@ in {
   imports = [
     ./hardware.nix
     ./video.nix
-    # ./vfio.nix
-    # ./vm.nix
-    # ./lookingglass.nix
+    ./vfio.nix
+    ./vm.nix
+    ./lookingglass.nix
 
     ../../option/openrazer.nix
     ../../option/printer/epson-et3750.nix
