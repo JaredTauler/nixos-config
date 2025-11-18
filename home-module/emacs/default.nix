@@ -20,7 +20,7 @@ in {
 
   # imports = [
   #   inputs.nix-colors.homeManagerModules.default
-  #   inputs.hyprshell.homeModules.hyprshell
+  #   inputs.hyprshell.homeModules.hyprshel fr
   # ];
 
   config = lib.mkIf config.my.emacs.enable {
@@ -110,7 +110,7 @@ in {
     # FIXME naughty
     home.file.".emacs.d/init.el".source =
       config.lib.file.mkOutOfStoreSymlink
-      "${config.home.homeDirectory}/nixos-config/home-option/emacs/dotfiles/init.el";
+      "${config.home.homeDirectory}/nixos-config/home-module/emacs/dotfiles/init.el";
 
     home.packages = with pkgs; [
       # Document editing
