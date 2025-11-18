@@ -20,7 +20,7 @@
 
     NixVirt = {
       url = "https://flakehub.com/f/AshleyYakeley/NixVirt/*.tar.gz";
-      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
 
     rust-overlay = {
@@ -49,7 +49,7 @@
 
     hyprshell = {
       url = "github:H3rmt/hyprswitch?ref=hyprshell";
-      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
 
   };

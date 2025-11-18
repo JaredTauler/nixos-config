@@ -1,0 +1,21 @@
+
+if [ $# -eq 0 ]; then
+  echo "Usage: $0 <monitor1> [monitor2 ...]"
+  exit 1
+fi
+
+# get current monitor state
+mon_info="$(hyprctl monitors -j | jq -r '.[] | "\(.name) \(.dpmsStatus)"')"
+
+for mon in "$@"; do
+  # extract DPMS state (on/off)
+  state=$(echo "$mon_info" | awk -v m="$mon" '$1 == m {print $2}')
+
+  if [ "$state" = "true" ] || [ "$state" = "on" ]; then
+    echo "ð» Turning off $mon"
+    hyprctl dispatch dpms off "$mon"
+  else
+    echo "ðº Turning on $mon"
+    hyprctl dispatch dpms on "$mon"
+  fi
+ done

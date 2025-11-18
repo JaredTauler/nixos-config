@@ -2,7 +2,7 @@
 {
   imports = [
     inputs.NixVirt.nixosModules.default
-    ./vm/machine/Windows11
+    # ./vm/machine/Windows11
 
   ];
 

@@ -1,5 +1,9 @@
-{ config, lib, pkgs, ... }:
-let
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}: let
   # vscode-js-debug and dap-node act funny together. maybe can be fixed in lisp
   jsDebugWrapped = pkgs.writeShellScriptBin "js-debug-wrapped" ''
     echo "js-debug-wrapped starting" >&2
@@ -15,112 +19,117 @@ in {
   programs.emacs = {
     enable = true;
     package = pkgs.emacs30-pgtk;
-    #       # (setq dap-js-debug-program '("${jsDebugWrapped}/bin/js-debug-wrapped")) 
+    #       # (setq dap-js-debug-program '("${jsDebugWrapped}/bin/js-debug-wrapped"))
     extraConfig = ''
       (setq
       dap-js-path "${pkgs.vscode-js-debug}/bin"
       dap-js-debug-program '("${pkgs.vscode-js-debug}/bin/js-debug"))
     '';
     extraPackages = epkgs:
-    with epkgs; [
-      direnv
-      envrc
-      magit
-      evil
+      with epkgs; [
+        direnv
+        envrc
+        magit
+        evil
 
-      lsp-mode
-      lsp-ui
-      tree-sitter
-      tree-sitter-langs
+        lsp-mode
+        lsp-ui
+        tree-sitter
+        tree-sitter-langs
 
-      cape
-      corfu
-      orderless
+        cape
+        corfu
+        orderless
 
-      #projectile
-      consult
-      vertico
-      which-key
-      marginalia
-      general # hotkeys
+        #projectile
+        consult
+        vertico
+        which-key
+        marginalia
+        general # hotkeys
 
-      flycheck
+        flycheck
 
-      nix-mode
+        nix-mode
 
-      # lisp      
-      slime
+        # lisp
+        slime
 
-      dap-mode
-      markdown-mode
-      pdf-tools
-      vterm
-      yaml-mode
-      web-mode
-      json-mode
-      typescript-mode
-      emacsql
+        mmm-mode
 
-      org
+        polymode # TODO
 
-      modus-themes
-      catppuccin-theme
-      ef-themes
+        dap-mode
+        markdown-mode
+        pdf-tools
+        vterm
+        yaml-mode
+        web-mode
+        json-mode
+        typescript-mode
+        emacsql
 
-      # texliveFull
-    ];
+        org
+
+        modus-themes
+        catppuccin-theme
+        ef-themes
+
+        # texliveFull
+      ];
   };
 
   # environment.sessionVariables.TREE_SITTER_LIB_PATH =
-    #   pkgs.lib.makeSearchPathOutput "lib" "lib" (with pkgs.tree-sitter-grammars; [
-      #     tree-sitter-c
-      #     tree-sitter-cpp
-      #     tree-sitter-json
-      #     tree-sitter-python
-      #     tree-sitter-typescript
-      #     tree-sitter-tsx
-      #     tree-sitter-javascript
-      #     tree-sitter-nix
-      #     tree-sitter-bash
-      #     tree-sitter-yaml
-      #     tree-sitter-markdown
-      #   ]);
+  #   pkgs.lib.makeSearchPathOutput "lib" "lib" (with pkgs.tree-sitter-grammars; [
+  #     tree-sitter-c
+  #     tree-sitter-cpp
+  #     tree-sitter-json
+  #     tree-sitter-python
+  #     tree-sitter-typescript
+  #     tree-sitter-tsx
+  #     tree-sitter-javascript
+  #     tree-sitter-nix
+  #     tree-sitter-bash
+  #     tree-sitter-yaml
+  #     tree-sitter-markdown
+  #   ]);
 
-      # FIXME naughty
-      home.file.".emacs.d/init.el".source = config.lib.file.mkOutOfStoreSymlink
-      "${config.home.homeDirectory}/nixos-config/home-option/emacs/dotfiles/init.el";
+  # FIXME naughty
+  home.file.".emacs.d/init.el".source =
+    config.lib.file.mkOutOfStoreSymlink
+    "${config.home.homeDirectory}/nixos-config/home-option/emacs/dotfiles/init.el";
 
-      home.packages = with pkgs; [
-        # Document editing
-        pandoc
-        texliveFull
+  home.packages = with pkgs; [
+    # Document editing
+    pandoc
+    texliveFull
 
-        # Nix
-        nixd
-        nixfmt-rfc-style
-        # nixfmt
-        statix
+    # Nix
+    nixd
+    # nixfmt-rfc-style
+    # nixfmt
+    alejandra
+    statix
 
-        # Webdev
+    # Webdev
 
-        nodejs_20
-        html-tidy
-        nodePackages.typescript
-        nodePackages.typescript-language-server
+    nodejs_20
+    html-tidy
+    nodePackages.typescript
+    nodePackages.typescript-language-server
 
-        git
-        gcc
-        gnumake
-        cmake
-        libtool
+    git
+    gcc
+    gnumake
+    cmake
+    libtool
 
-        python3
-        direnv
+    python3
+    direnv
 
-        vscode-js-debug
-      ];
+    vscode-js-debug
+  ];
 
-      # For direnv
-      services.lorri.enable = true;
-
+  # For direnv
+  services.lorri.enable = true;
 }

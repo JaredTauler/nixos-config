@@ -94,9 +94,11 @@
  :keymaps 'evil-insert-state-map
  "C-c" 'evil-normal-state)
 
+
+;; FIXME retarded
 (defun my/reload-config ()
   (interactive)
-  (load-file "~/.config/emacs/init.el"))
+  (load-file "~/nixos-config/home-option/emacs/dotfiles/init.el"))
 
 
 (require 'flycheck)
@@ -115,8 +117,62 @@
 (global-set-key (kbd "C-s") #'consult-line) ;;
 
 
-
+(defun alejandra-format-buffer ()
+  "Format the current buffer using Alejandra."
+  (interactive)
+  (unless (executable-find "alejandra")
+    (user-error "Alejandra not found in PATH"))
+  (let ((tmpfile (make-temp-file "alejandra" nil ".nix"))
+        (outputbuf (get-buffer-create "*Alejandra Errors*"))
+        (curpoint (point)))
+    (unwind-protect
+        (progn
+          (write-region nil nil tmpfile nil 'silent)
+          (if (zerop (call-process "alejandra" nil outputbuf nil tmpfile))
+              (progn
+                (erase-buffer)
+                (insert-file-contents tmpfile)
+                (goto-char curpoint)
+                (message "Alejandra formatted buffer"))
+            (progn
+              (display-buffer outputbuf)
+              (error "Alejandra failed; see *Alejandra Errors*"))))
+      (delete-file tmpfile))))
 ;; nix
+;; Hook
+;; (add-hook 'nix-mode-hook
+;; 	  (lambda ()
+;; 	    (lsp)
+;; 	    (flycheck-mode 1)
+;; 	    (when (fboundp 'tree-sitter-mode)
+;; 	      (tree-sitter-mode)
+;; 	      (tree-sitter-hl-mode))
+
+;; 	    ;; nix-formt-buffer is shitty
+;; 	    ;; (setq-local format-buffer-function 'nix-mode-format)
+;; 	    (setq-local format-buffer-function #'alejandra-format-buffer)
+
+;; 	    )
+;; 	  )
+
+(require 'polymode)
+
+(defun my-nix-hook ()
+  (lsp-deferred)
+  (flycheck-mode 1)
+  (setq-local format-buffer-function #'alejandra-format-buffer))
+(add-hook 'poly-nix-mode-hook #'my-nix-hook)
+
+;; must end with hostmode, then innermode:
+(define-hostmode poly-nix-hostmode :mode 'nix-mode)
+(define-innermode poly-nix-bash-innermode
+  :mode 'sh-mode
+  :head-matcher "''[ \t]*\n"
+  :tail-matcher "^[ \t]*''"
+  :head-mode 'host :tail-mode 'host)
+
+
+
 (require 'nix-mode)
 (add-to-list 'auto-mode-alist '("\\.nix\\'" . nix-mode))
 
@@ -129,6 +185,18 @@
 (defvar-local format-buffer-function nil
   "Function to format the current buffer. Should be buffer-local.")
 
+
+(define-polymode poly-nix-mode
+  :hostmode 'poly-nix-hostmode
+  :innermodes '(poly-nix-bash-innermode))
+
+;; ensure .nix uses poly, not plain nix-mode
+(setq auto-mode-alist
+      (cons '("\\.nix\\'" . poly-nix-mode)
+            (rassq-delete-all 'nix-mode auto-mode-alist)))
+
+
+;; general format buffer function
 (defun format-buffer ()
   "Format the current buffer using `format-buffer-function`, or notify if not set."
   (interactive)
@@ -139,6 +207,8 @@
 
 ;; all languages
 (require 'dap-mode)
+(use-package polymode :ensure t)
+(use-package nix-mode  :ensure t)
 
 ;; debug dap
 (setenv "DEBUG" "*")
@@ -154,23 +224,6 @@
 	    ;;   (tree-sitter-hl-mode))
 	    ))
 
-
-;; nix
-;; (add-hook 'nix-mode-hook #'lsp)
-(add-hook 'nix-mode-hook
-	  (lambda ()
-	    (lsp)
-	    (flycheck-mode 1)
-	    (when (fboundp 'tree-sitter-mode)
-	      (tree-sitter-mode)
-	      (tree-sitter-hl-mode))
-
-	    ;; TODO nix-formt-buffer shitty?
-	    (setq-local format-buffer-function 'nix-mode-format)
-
-
-	    )
-	  )
 
 ;; js + ts
 (require 'dap-js)

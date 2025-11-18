@@ -28,5 +28,11 @@ in
       };
       # Something really bad happens if this is enabled with home-manager hyprland
       services.picom.enable = false;
+
+
+      systemd.user.services.xdg-desktop-portal = {
+        after = [ "graphical-session.target" "hyprland.service" ];
+        wants = [ "hyprland.service" ];
+      };
     };
 }

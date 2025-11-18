@@ -25,10 +25,19 @@
     homeDirectory = "/home/jared";
   };
 
+
+
   home.packages = with pkgs; [
+
+    # FIXME arrange these tools so i know where to find them 
     libreoffice
 
+    pdfarranger   
+    kdePackages.okular # low key a piece of shit
+
+
     steam
+
     gamescope
 
     # TODO dolphin multiplayer flake?

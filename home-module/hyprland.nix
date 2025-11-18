@@ -1,23 +1,19 @@
-{ inputs
-, lib
-, config
-, pkgs
-, ...
-}:
-let
-  inherit (lib) types mkEnableOption mkOption mkIf;
-
-in
-
 {
-
+  inputs,
+  lib,
+  config,
+  pkgs,
+  ...
+}: let
+  inherit (lib) types mkEnableOption mkOption mkIf;
+in {
   options.my.hyprland = {
     enable = mkEnableOption "Enable my Hyprland setup";
     sources = mkOption {
       type = types.listOf types.string;
       default = [
-	      # TODO
-        "/home/jared/nixos-config/home-module/hyprland.conf"
+        # TODO
+        # "/home/jared/nixos-config/home-module/hyprland.conf"
       ];
       description = "Extra Hyprland config fragments";
     };
@@ -28,77 +24,63 @@ in
     inputs.hyprshell.homeModules.hyprshell
   ];
 
-
   config = lib.mkIf config.my.hyprland.enable (
     let
       system = pkgs.stdenv.hostPlatform.system;
 
-
       # FIXME how make this conditional only when hyprland enabled
       # Build hyprshell with latest rust
       pkgsWithRust = import inputs.nixpkgs {
-        system   = system;
-        overlays = [ inputs.rust-overlay.overlays.default ];
+        system = system;
+        overlays = [inputs.rust-overlay.overlays.default];
       };
 
       rustNightly = pkgsWithRust.rust-bin.nightly.latest.default;
-
-      hyprshellNightly =
-        inputs.hyprshell.packages.${system}.hyprshell.override {
-          rustPlatform = pkgsWithRust.makeRustPlatform {
-            cargo = rustNightly;
-            rustc = rustNightly;
-          };
-        };
-
+      # hyprshellNightly =
+      #   inputs.hyprshell.packages.${system}.hyprshell.override {
+      #     rustPlatform = pkgsWithRust.makeRustPlatform {
+      #       cargo = rustNightly;
+      #       rustc = rustNightly;
+      #     };
+      #   };
     in {
       wayland.windowManager.hyprland = {
-
         enable = true;
         systemd.enable = false;
         plugins = with pkgs.hyprlandPlugins; [
           hyprsplit
           hyprspace
-          borders-plus-plus          
+          borders-plus-plus
         ];
 
         settings = {
           "$mod" = "SUPER";
-          bind =
-            [
+          bind = [
+            # "$mod, F, exec, firefox"
+            # ", Print, exec, grimblast copy area"
+            # "bind = SUPER, 1, split:workspace, 1"
+            #
+          ];
 
-              # "$mod, F, exec, firefox"
-              # ", Print, exec, grimblast copy area"
-              # "bind = SUPER, 1, split:workspace, 1"
-              #
-
-            ];
-
-
-            source = (
-              config.my.hyprland.sources
-            );
-
+          source = (
+            ["/home/jared/nixos-config/home-module/hyprland.conf"] ++ config.my.hyprland.sources
+          );
         };
       };
 
-
-      xdg.portal = {
-        enable = true;
-        # hyprland is the backend you want in charge
-        extraPortals = [
-          pkgs.xdg-desktop-portal-gtk  # for file pickers
-          pkgs.xdg-desktop-portal-hyprland
-        ];
-        config = {
-          common = {
-            default = "hyprland";
-          };
-        };
-      };
-
-
-
+      # xdg.portal = {
+      #   enable = true;
+      #   # hyprland is the backend you want in charge
+      #   extraPortals = [
+      #     pkgs.xdg-desktop-portal-gtk  # for file pickers
+      #     pkgs.xdg-desktop-portal-hyprland
+      #   ];
+      #   config = {
+      #     common = {
+      #       default = "hyprland";
+      #     };
+      #   };
+      # };
 
       # nixpkgs.overlays = [ inputs.rust-overlay.overlays.default ];
 
@@ -109,8 +91,6 @@ in
       # TODO GTK4 not workin
       # TODO emacs.
 
-
-
       programs.kitty = {
         enable = true;
         settings = {
@@ -120,18 +100,10 @@ in
         };
       };
 
-
-
-
-
       home.packages = with pkgs; [
-
-        xdg-desktop-portal
-        xdg-desktop-portal-gtk
-        xdg-desktop-portal-hyprland
-
-
-
+        # xdg-desktop-portal
+        # xdg-desktop-portal-gtk
+        # xdg-desktop-portal-hyprland
 
         inputs.hyprsession.packages.${pkgs.system}.hyprsession
 
@@ -144,6 +116,7 @@ in
         swappy
         wl-clipboard
 
+        
 
         # Core KIO framework (implements file:// URIs)
         # kde.kio
@@ -151,7 +124,6 @@ in
         # Optional extras: thumbnailers, smb, sftp, mtp, etc.
         #kde.kio-extras
       ];
-
 
       programs.wofi = {
         enable = true;
@@ -232,8 +204,6 @@ in
         '';
       };
 
-
-
       # https://mynixos.com/home-manager/options/programs.waybar
       programs.waybar = {
         enable = true; # TODO does this enable it same way systmd command thing does?
@@ -251,23 +221,17 @@ in
         settings = {
           listener = [
             # {
-              #   timeout = 900;
-              #   # on-timeout = "hyprlock";
-              # }
-              {
-                timeout = 300 ;
-                on-timeout = "hyprctl dispatch dpms off";
-                on-resume = "hyprctl dispatch dpms on";
-              }
+            #   timeout = 900;
+            #   # on-timeout = "hyprlock";
+            # }
+            {
+              timeout = 300;
+              on-timeout = "hyprctl dispatch dpms off";
+              on-resume = "hyprctl dispatch dpms on";
+            }
           ];
         };
       };
-
-
-
-
-
-
 
       # Https://github.com/jtheoof/swappy
       # TODO pull request one thing with moving too fast
@@ -287,25 +251,24 @@ in
       ];
 
       programs.hyprshell = {
-        package = hyprshellNightly;
+        # package = hyprshellNightly;
         enable = true;
         systemd.args = "-v";
         settings = {
-          launcher = {
-            max_items = 6;
-            plugins.websearch = {
+          windows = {
+            enable = true; # please dont forget to enable windows if you want to use overview or switch
+            overview = {
               enable = true;
-              engines = [{
-                name = "DuckDuckGo";
-                url = "https://duckduckgo.com/?q=%s";
-                key = "d";
-              }];
+              key = "super_l";
+              modifier = "super";
+              launcher = {
+                max_items = 6;
+              };
             };
+            switch.enable = true;
           };
-
         };
       };
     }
   );
-
 }
