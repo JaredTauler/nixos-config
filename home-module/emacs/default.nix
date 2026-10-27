@@ -83,6 +83,8 @@ in {
           emacsql
 
           org
+          # org-anki
+          org-drill
 
           modus-themes
           catppuccin-theme

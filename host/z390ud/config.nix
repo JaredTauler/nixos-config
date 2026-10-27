@@ -9,8 +9,9 @@ in {
 
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
-  networking.networkmanager.enable = true;
 
+  networking.networkmanager.enable = true;
+  networking.networkmanager.insertNameservers = ["1.1.1.1" "8.8.8.8"];
   swapDevices = [
     {
       device = "/swapfile";
@@ -28,7 +29,7 @@ in {
     ../../option/openrazer.nix
     ../../option/printer/epson-et3750.nix
     # TODO 3d printer
-    # ../../option/3dprinter.nix
+    ../../option/3dprinter.nix
   ];
 
   systemd.slices."user.slice" = {
@@ -52,13 +53,16 @@ in {
     cpuset
     # davinci-resolve
 
-    nexusmods-app-unfree
-
     thunderbird
 
     xenia-canary
 
     cacert
+
+    ollama-rocm
+
+    xorg.xinit
+    openbox
   ];
 
   services.openssh = {
@@ -84,7 +88,7 @@ in {
     hybridSleep.enable = false; # Suspend‑then‑Hibernate
   };
 
-  programs.adb.enable = true;
+  # programs.adb.enable = true;
   users.users.jared.extraGroups = ["adbusers" "plugdev" "kvm" "libvirtd" "docker" "i2c"];
 
   # For pixel
@@ -122,4 +126,19 @@ in {
 
   hardware.i2c.enable = true;
   # users.users.jared.extraGroups = [ "i2c" ];
+
+  programs.gamemode.enable = true;
+
+  hardware.steam-hardware.enable = true;
+
+  services.logmein-hamachi.enable = true;
+
+  networking.firewall.enable = false;
+
+  services.ollama = {
+    enable = true;
+    package = pkgs.ollama-rocm;
+    # Optional: preload models, see https://ollama.com/library
+    loadModels = ["deepseek-r1:1.5b"];
+  };
 }

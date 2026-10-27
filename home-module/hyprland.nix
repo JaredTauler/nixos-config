@@ -10,7 +10,7 @@ in {
   options.my.hyprland = {
     enable = mkEnableOption "Enable my Hyprland setup";
     sources = mkOption {
-      type = types.listOf types.string;
+      type = types.listOf types.str;
       default = [
         # TODO
         # "/home/jared/nixos-config/home-module/hyprland.conf"
@@ -49,7 +49,7 @@ in {
         systemd.enable = false;
         plugins = with pkgs.hyprlandPlugins; [
           hyprsplit
-          hyprspace
+          # hyprspace
           borders-plus-plus
         ];
 
@@ -86,6 +86,17 @@ in {
 
       # https://github.com/vfosnar/nix-colors-adapters
       colorScheme = inputs.nix-colors.colorSchemes.dracula;
+
+      # QT stuff
+      # home.sessionVariables = {
+      #   QT_QPA_PLATFORMTHEME = "qt5ct"; # covers a lot of Qt5 apps
+      #   QT_STYLE_OVERRIDE = "kvantum"; # makes it consistently dark
+      # };
+      # systemd.user.sessionVariables = {
+      #   QT_QPA_PLATFORMTHEME = "qt5ct";
+      #   QT_STYLE_OVERRIDE = "kvantum";
+      # };
+
       # TODO set hyprland theme match this
       # TODO look at themes
       # TODO GTK4 not workin
@@ -100,12 +111,30 @@ in {
         };
       };
 
+      # qt.style = "kvantum";
+
+
+      # FIXME
+      qt = {
+        enable = true;
+        platformTheme.name = "gtk3"; # uses qt5ct/qt6ct configs
+
+        # Force a dark-looking Qt style
+        style.name = "adwaita-dark"; # try this first
+      };
+
       home.packages = with pkgs; [
+        kdePackages.qt6ct
+        libsForQt5.qt5ct
+
+        libsForQt5.qtstyleplugin-kvantum
+        kdePackages.qtstyleplugin-kvantum
+
         # xdg-desktop-portal
         # xdg-desktop-portal-gtk
         # xdg-desktop-portal-hyprland
 
-        inputs.hyprsession.packages.${pkgs.system}.hyprsession
+        # inputs.hyprsession.packages.${pkgs.system}.hyprsession
 
         grim # For flameshot
         wlr-layout-ui # For changing monitor config
@@ -116,7 +145,7 @@ in {
         swappy
         wl-clipboard
 
-        
+        swaynotificationcenter
 
         # Core KIO framework (implements file:// URIs)
         # kde.kio
@@ -250,25 +279,65 @@ in {
         "custom_color=rgba(0,0,0,1)"
       ];
 
-      programs.hyprshell = {
-        # package = hyprshellNightly;
+      # programs.hyprshell = {
+      #   # package = hyprshellNightly;
+      #   enable = true;
+      #   systemd.args = "-v";
+      #   settings = {
+      #     windows = {
+      #       enable = true; # please dont forget to enable windows if you want to use overview or switch
+      #       overview = {
+      #         enable = true;
+      #         key = "super_l";
+      #         modifier = "super";
+      #         launcher = {
+      #           max_items = 6;
+      #         };
+      #       };
+      #       switch.enable = true;
+      #     };
+      #   };
+      # };
+
+      services.hyprshell = {
         enable = true;
-        systemd.args = "-v";
         settings = {
           windows = {
-            enable = true; # please dont forget to enable windows if you want to use overview or switch
+            scale = 8.0;
             overview = {
-              enable = true;
-              key = "super_l";
-              modifier = "super";
               launcher = {
                 max_items = 6;
               };
             };
-            switch.enable = true;
+            switch = {
+              modifier = "alt";
+            };
           };
         };
       };
+
+      home.file.".config/swaync/config.json".text = ''
+        {
+          "position": "top-right",
+          "timeout": 5000,
+          "widgets": ["notifications", "mpris"],
+          "notification-window-width": 380
+        }
+      '';
+
+      home.file.".config/swaync/style.css".text = ''
+        window {
+          border-radius: 12px;
+          background: rgba(30,30,30,0.85);
+        }
+
+        .notificaion {
+          padding: 12px;
+          margin: 6px;
+          border-radius: 10px;
+          background: rgba(50,50,50,0.9);
+        }
+      '';
     }
   );
 }

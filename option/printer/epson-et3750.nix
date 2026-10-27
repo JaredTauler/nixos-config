@@ -22,7 +22,7 @@
     enable = true;
     drivers = [
       # pkgs.epson-201401w 
-      # pkgs.gutenprint
+      pkgs.gutenprint
       # pkgs.epson-workforce-635-nx625-series
       pkgs.epson-escpr2
     ];

@@ -15,7 +15,7 @@
 
   environment.systemPackages = with pkgs; [
     printrun          # wrapped “pronterface”, now works
-    slic3r
+    # slic3r
   ];
 
   # For serial

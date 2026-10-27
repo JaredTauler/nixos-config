@@ -25,7 +25,7 @@ in
 
   # FIXME libvirtd.service needs to be restarted for this to update
   # Took way too long to realize that.
-  virtualisation.libvirtd.enable = true;
+  # virtualisation.libvirtd.enable = true;
 
   # FIXME make scripts to allow passing in GPU IDs
 
@@ -58,25 +58,25 @@ in
     # };
 
     # Scream
-    "${name}-load_scream" = {
-      script = null;
-      source = mkHook ../../load_scream.sh;
-      scope = {
-        objects = [ name ];
-        operations = [ "prepare" ];
-        subOperations = [ "begin" ];
-      };
-    };
+    # "${name}-load_scream" = {
+    #   script = null;
+    #   source = mkHook ../../load_scream.sh;
+    #   scope = {
+    #     objects = [ name ];
+    #     operations = [ "prepare" ];
+    #     subOperations = [ "begin" ];
+    #   };
+    # };
 
-    "${name}-stop_scream" = {
-      script = null;
-      source = mkHook ../../unload_scream.sh;
-      scope = {
-        objects = [ name ];
-        operations = [ "stopped" ];
-        subOperations = [ "end" ];
-      };
-    };
+    # "${name}-stop_scream" = {
+    #   script = null;
+    #   source = mkHook ../../unload_scream.sh;
+    #   scope = {
+    #     objects = [ name ];
+    #     operations = [ "stopped" ];
+    #     subOperations = [ "end" ];
+    #   };
+    # };
 
 
 
